@@ -1,0 +1,15 @@
+{
+  "scope": "semantic-only adversarial evaluation",
+  "checkpoint": "outputs/image_cifar10_quick/checkpoint_best.pt",
+  "attacks": [
+    "pga"
+  ],
+  "task": "image",
+  "target_quality_db": 15.0,
+  "target_distortion": 0.03162277660168379,
+  "power_fields": {
+    "paper_default": "sum_i s_i^2",
+    "diagnostic": "mean_i s_i^2"
+  },
+  "cw_note": "Uses corrected hinge relu(D* + kappa - D); Eq. (38) has the opposite sign."
+}

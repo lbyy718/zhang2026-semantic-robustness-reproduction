@@ -1,0 +1,94 @@
+{
+  "scope": "semantic-only",
+  "device": "cuda",
+  "seed": 2026,
+  "epochs": 1000,
+  "best_validation_mse": 0.002412790957093239,
+  "csi_normalization": null,
+  "config": {
+    "task": "image",
+    "seed": 2026,
+    "deterministic": true,
+    "output_dir": "../outputs/image_cifar10",
+    "data": {
+      "root": "../data/cifar10",
+      "download": true,
+      "bandwidth_ratio": 0.25,
+      "batch_size": 512,
+      "evaluation_batch_size": 256,
+      "validation_samples": 10000,
+      "num_workers": 0
+    },
+    "model": {
+      "in_channels": 3,
+      "spatial_size": [
+        32,
+        32
+      ],
+      "channel_multiplier": 6,
+      "kernel_size": 3,
+      "residual_kernel_size": 3
+    },
+    "channel": {
+      "fading_gain": 1.0
+    },
+    "training": {
+      "epochs": 1000,
+      "batch_size_source": "Table I",
+      "learning_rate": 0.001,
+      "weight_decay": 0.01,
+      "snr_db": 10.0,
+      "validation_snr_db": 10.0,
+      "checkpoint_interval": 100
+    },
+    "evaluation": {
+      "snr_db": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "max_samples": 10000,
+      "channel_repeats": 1
+    },
+    "attacks": {
+      "target_quality_db": 15.0,
+      "max_samples": 10000,
+      "pga": {
+        "step_size": 0.1,
+        "eps": 1e-08,
+        "max_steps": 2000,
+        "refine_steps": 0,
+        "batch_size": 32
+      },
+      "cw": {
+        "learning_rate": 0.01,
+        "initial_c": 1.0,
+        "c_min": 1e-06,
+        "c_max": 100.0,
+        "binary_search_steps": 9,
+        "max_steps": 2000,
+        "kappa": 0.0,
+        "early_stop_on_success": true,
+        "batch_size": 1
+      }
+    }
+  }
+}

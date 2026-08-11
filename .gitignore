@@ -1,0 +1,32 @@
+# Datasets and downloaded archives are intentionally kept outside Git.
+data/*
+!data/README.md
+downloads/
+
+# Raw experiment products. Curated, small artifacts belong in results/.
+outputs/
+checkpoints/
+tmp/
+
+# Python caches and local tooling.
+.pytest_cache/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Model/data binaries and logs.
+*.pt
+*.pth
+*.ckpt
+*.mat
+*.npy
+*.npz
+*.zip
+*.tar.gz
+*.log
+
+# Editors and operating systems.
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

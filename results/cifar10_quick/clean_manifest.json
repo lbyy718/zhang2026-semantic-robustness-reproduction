@@ -1,0 +1,106 @@
+{
+  "scope": "semantic-only clean evaluation",
+  "checkpoint": "outputs/image_cifar10_quick/checkpoint_best.pt",
+  "task": "image",
+  "rows": [
+    {
+      "snr_db": 0.0,
+      "samples": 2000,
+      "channel_repeats": 1,
+      "mean_distortion": 0.016082439571619034,
+      "mean_mse": 0.016082439571619034,
+      "mean_psnr_db": 18.182037353515625,
+      "repeat_std_psnr_db": 0.0
+    },
+    {
+      "snr_db": 2.0,
+      "samples": 2000,
+      "channel_repeats": 1,
+      "mean_distortion": 0.012258043512701988,
+      "mean_mse": 0.012258043512701988,
+      "mean_psnr_db": 19.389137268066406,
+      "repeat_std_psnr_db": 0.0
+    },
+    {
+      "snr_db": 4.0,
+      "samples": 2000,
+      "channel_repeats": 1,
+      "mean_distortion": 0.009738949127495289,
+      "mean_mse": 0.009738949127495289,
+      "mean_psnr_db": 20.43443489074707,
+      "repeat_std_psnr_db": 0.0
+    },
+    {
+      "snr_db": 6.0,
+      "samples": 2000,
+      "channel_repeats": 1,
+      "mean_distortion": 0.008093896321952343,
+      "mean_mse": 0.008093896321952343,
+      "mean_psnr_db": 21.283964157104492,
+      "repeat_std_psnr_db": 0.0
+    },
+    {
+      "snr_db": 8.0,
+      "samples": 2000,
+      "channel_repeats": 1,
+      "mean_distortion": 0.0070332312025129795,
+      "mean_mse": 0.0070332312025129795,
+      "mean_psnr_db": 21.946012496948242,
+      "repeat_std_psnr_db": 0.0
+    },
+    {
+      "snr_db": 10.0,
+      "samples": 2000,
+      "channel_repeats": 1,
+      "mean_distortion": 0.006375190336257219,
+      "mean_mse": 0.006375190336257219,
+      "mean_psnr_db": 22.414060592651367,
+      "repeat_std_psnr_db": 0.0
+    },
+    {
+      "snr_db": 12.0,
+      "samples": 2000,
+      "channel_repeats": 1,
+      "mean_distortion": 0.005961216986179352,
+      "mean_mse": 0.005961216986179352,
+      "mean_psnr_db": 22.742292404174805,
+      "repeat_std_psnr_db": 0.0
+    },
+    {
+      "snr_db": 14.0,
+      "samples": 2000,
+      "channel_repeats": 1,
+      "mean_distortion": 0.005695692729204893,
+      "mean_mse": 0.005695692729204893,
+      "mean_psnr_db": 22.968143463134766,
+      "repeat_std_psnr_db": 0.0
+    },
+    {
+      "snr_db": 16.0,
+      "samples": 2000,
+      "channel_repeats": 1,
+      "mean_distortion": 0.005533213727176189,
+      "mean_mse": 0.005533213727176189,
+      "mean_psnr_db": 23.112258911132812,
+      "repeat_std_psnr_db": 0.0
+    },
+    {
+      "snr_db": 18.0,
+      "samples": 2000,
+      "channel_repeats": 1,
+      "mean_distortion": 0.0054163397289812565,
+      "mean_mse": 0.0054163397289812565,
+      "mean_psnr_db": 23.217823028564453,
+      "repeat_std_psnr_db": 0.0
+    },
+    {
+      "snr_db": 20.0,
+      "samples": 2000,
+      "channel_repeats": 1,
+      "mean_distortion": 0.005351801868528128,
+      "mean_mse": 0.005351801868528128,
+      "mean_psnr_db": 23.278335571289062,
+      "repeat_std_psnr_db": 0.0
+    }
+  ]
+}

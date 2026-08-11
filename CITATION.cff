@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: >-
+  This is an unofficial semantic-communication-only reproduction. If you use
+  it, please cite both this repository and the original paper.
+title: "Semantic Robustness: Unofficial Reproduction of Zhang et al. (2026)"
+type: software
+authors:
+  - alias: lbyy718
+version: 1.0.0
+date-released: 2026-08-11
+license: MIT
+repository-code: "https://github.com/lbyy718/zhang2026-semantic-robustness-reproduction"
+preferred-citation:
+  type: article
+  title: "Unanticipated Adversarial Robustness of Semantic Communication"
+  authors:
+    - family-names: Zhang
+      given-names: Runxin
+    - family-names: Shao
+      given-names: Yulin
+    - family-names: An
+      given-names: Hongyu
+    - family-names: Qin
+      given-names: Zhijin
+    - family-names: Huang
+      given-names: Kaibin
+  year: 2026
+  identifiers:
+    - type: arxiv
+      value: "2603.24082"
