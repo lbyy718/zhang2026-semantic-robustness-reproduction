@@ -4,7 +4,6 @@
   "seed": 2026,
   "epochs": 1000,
   "best_validation_mse": 0.002412790957093239,
-  "csi_normalization": null,
   "config": {
     "task": "image",
     "seed": 2026,

@@ -9,7 +9,5 @@ dependencies:
       - torch==2.13.0+cu130
       - torchvision==0.28.0+cu130
       - numpy>=1.26
-      - scipy>=1.11
-      - h5py>=3.10
       - matplotlib>=3.8
       - pytest>=8

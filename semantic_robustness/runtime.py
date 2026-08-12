@@ -20,7 +20,6 @@ from .channel import AWGNChannel
 from .config import resolve_relative, without_runtime_fields
 from .data import (
     cifar10_datasets,
-    csi_dataset,
     limited_dataset,
     make_loader,
     unwrap_batch,
@@ -28,7 +27,6 @@ from .data import (
 from .metrics import (
     distortion_per_sample,
     mse_per_sample,
-    nmse_db,
     psnr,
     quality_name,
     target_distortion,
@@ -64,46 +62,18 @@ def build_model(config: dict[str, Any]) -> DeepJSCC:
         spatial_size=tuple(model.get("spatial_size", [32, 32])),
         kernel_size=int(model.get("kernel_size", 3)),
         residual_kernel_size=int(model.get("residual_kernel_size", 3)),
-        intermediate_sigmoid=bool(model.get("intermediate_sigmoid", True)),
-        zero_mean_symbols=bool(model.get("zero_mean_symbols", False)),
-        global_mixing=bool(model.get("global_mixing", False)),
-        complex_symbols=bool(model.get("complex_symbols", False)),
     )
 
 
-def _csi_split(config: dict[str, Any], split: str) -> tuple[Path, str | None]:
+def build_dataset(config: dict[str, Any], split: str) -> Dataset[Any]:
+    if split not in {"train", "test"}:
+        raise ValueError("CIFAR-10 split must be 'train' or 'test'.")
     data = config["data"]
-    path_value = data.get(f"{split}_path", data.get("path"))
-    if not path_value:
-        raise ValueError(f"CSI configuration is missing data.{split}_path or data.path.")
-    key = data.get(f"{split}_key", split if str(path_value).lower().endswith(".npz") else None)
-    return resolve_relative(config, path_value), key
-
-
-def build_dataset(
-    config: dict[str, Any],
-    split: str,
-    *,
-    csi_normalization: dict[str, float] | None = None,
-) -> tuple[Dataset[Any], dict[str, float] | None]:
-    data = config["data"]
-    if config["task"] == "image":
-        root = resolve_relative(config, data.get("root", "../data/cifar10"))
-        train, test = cifar10_datasets(root, download=bool(data.get("download", False)))
-        return (train if split == "train" else test), None
-
-    path, key = _csi_split(config, split)
-    minimum = None if csi_normalization is None else csi_normalization["minimum"]
-    maximum = None if csi_normalization is None else csi_normalization["maximum"]
-    dataset, normalization = csi_dataset(
-        path,
-        key=key,
-        representation=data.get("representation", "magnitude"),
-        already_angular_delay=bool(data.get("already_angular_delay", True)),
-        normalization_min=minimum,
-        normalization_max=maximum,
+    root = resolve_relative(config, data.get("root", "../data/cifar10"))
+    train_data, test_data = cifar10_datasets(
+        root, download=bool(data.get("download", False))
     )
-    return dataset, normalization
+    return train_data if split == "train" else test_data
 
 
 def _sample_train_snr(specification: Any, device: torch.device) -> float | Tensor:
@@ -147,7 +117,6 @@ def _checkpoint_payload(
     optimizer: torch.optim.Optimizer,
     epoch: int,
     config: dict[str, Any],
-    csi_normalization: dict[str, float] | None,
 ) -> dict[str, Any]:
     return {
         "paper": "Zhang et al. 2026, Unanticipated Adversarial Robustness of Semantic Communication",
@@ -156,7 +125,6 @@ def _checkpoint_payload(
         "model_state": model.state_dict(),
         "optimizer_state": optimizer.state_dict(),
         "config": without_runtime_fields(config),
-        "csi_normalization": csi_normalization,
     }
 
 
@@ -183,11 +151,8 @@ def train(
     set_seed(seed, bool(config.get("deterministic", True)))
     device = choose_device(device_name)
     output = _output_dir(config, output_override)
-    train_data, csi_normalization = build_dataset(config, "train")
-    validation_split = "validation" if config["task"] == "csi" else "test"
-    validation_data, _ = build_dataset(
-        config, validation_split, csi_normalization=csi_normalization
-    )
+    train_data = build_dataset(config, "train")
+    validation_data = build_dataset(config, "test")
 
     data_config = config["data"]
     train_loader = make_loader(
@@ -283,13 +248,10 @@ def train(
             "validation_snr_db": validation_snr,
             "elapsed_seconds": time.time() - start_time,
         }
-        if loss_name == "nmse":
-            row["train_nmse"] = train_loss
-            row["validation_nmse"] = validation_loss
         log_rows.append(row)
         print(json.dumps(row, ensure_ascii=False), flush=True)
 
-        payload = _checkpoint_payload(model, optimizer, epoch, config, csi_normalization)
+        payload = _checkpoint_payload(model, optimizer, epoch, config)
         torch.save(payload, output / "checkpoint_last.pt")
         if validation_loss < best_loss:
             best_loss = validation_loss
@@ -310,59 +272,32 @@ def train(
             "selection_metric": f"validation_{loss_name}",
             "best_validation_loss": best_loss,
             f"best_validation_{loss_name}": best_loss,
-            "csi_normalization": csi_normalization,
             "config": without_runtime_fields(config),
         },
     )
     return output
 
 
-def _metric_tensors(
-    config: dict[str, Any], target: Tensor, reconstruction: Tensor
-) -> tuple[Tensor, Tensor]:
-    if config["task"] != "csi":
-        return target, reconstruction
-    center = float(config.get("data", {}).get("metric_center", 0.0))
-    return target - center, reconstruction - center
-
-
 def _distortion(config: dict[str, Any], target: Tensor, reconstruction: Tensor) -> Tensor:
-    metric_target, metric_reconstruction = _metric_tensors(
-        config, target, reconstruction
-    )
-    return distortion_per_sample(
-        config["task"], metric_target, metric_reconstruction
-    )
+    return distortion_per_sample(config["task"], target, reconstruction)
 
 
 def _quality(config: dict[str, Any], target: Tensor, reconstruction: Tensor) -> Tensor:
-    metric_target, metric_reconstruction = _metric_tensors(
-        config, target, reconstruction
-    )
-    return (
-        psnr(metric_target, metric_reconstruction)
-        if config["task"] == "image"
-        else nmse_db(metric_target, metric_reconstruction)
-    )
+    return psnr(target, reconstruction)
 
 
 def _loss_name(config: dict[str, Any]) -> str:
     name = str(config.get("training", {}).get("loss", "mse")).lower()
-    if name not in {"mse", "nmse"}:
-        raise ValueError("training.loss must be 'mse' or 'nmse'.")
-    if name == "nmse" and config["task"] != "csi":
-        raise ValueError("training.loss='nmse' is only supported for CSI.")
+    if name != "mse":
+        raise ValueError("The image-only repository supports training.loss='mse'.")
     return name
 
 
 def _loss_per_sample(
     config: dict[str, Any], target: Tensor, reconstruction: Tensor
 ) -> Tensor:
-    return (
-        mse_per_sample(target, reconstruction)
-        if _loss_name(config) == "mse"
-        else _distortion(config, target, reconstruction)
-    )
+    _loss_name(config)
+    return mse_per_sample(target, reconstruction)
 
 
 def _evaluate_dataset(
@@ -405,10 +340,8 @@ def evaluate_clean(
     seed = int(config.get("seed", 2026))
     set_seed(seed, bool(config.get("deterministic", True)))
     device = choose_device(device_name)
-    model, checkpoint = load_checkpoint(config, checkpoint_path, device)
-    dataset, _ = build_dataset(
-        config, "test", csi_normalization=checkpoint.get("csi_normalization")
-    )
+    model, _ = load_checkpoint(config, checkpoint_path, device)
+    dataset = build_dataset(config, "test")
     evaluation = config["evaluation"]
     dataset = limited_dataset(dataset, int(evaluation.get("max_samples", 0)) or None)
     loader = make_loader(
@@ -490,16 +423,14 @@ def evaluate_attacks(
     seed = int(config.get("seed", 2026))
     set_seed(seed, bool(config.get("deterministic", True)))
     device = choose_device(device_name)
-    model, checkpoint = load_checkpoint(config, checkpoint_path, device)
-    dataset, _ = build_dataset(
-        config, "test", csi_normalization=checkpoint.get("csi_normalization")
-    )
+    model, _ = load_checkpoint(config, checkpoint_path, device)
+    dataset = build_dataset(config, "test")
     evaluation = config["evaluation"]
     max_samples = int(config.get("attacks", {}).get("max_samples", evaluation.get("max_samples", 0)))
     dataset = limited_dataset(dataset, max_samples or None)
     channel = AWGNChannel(float(config.get("channel", {}).get("fading_gain", 1.0))).to(device)
     task = config["task"]
-    target_quality = float(config["attacks"].get("target_quality_db", 15.0 if task == "image" else -16.0))
+    target_quality = float(config["attacks"].get("target_quality_db", 15.0))
     threshold = target_distortion(task, target_quality)
     sample_rows: list[dict[str, Any]] = []
     summary_rows: list[dict[str, Any]] = []
@@ -623,7 +554,7 @@ def plot_results(
         key = f"mean_{quality_name(config['task'])}"
         axis.plot([float(row["snr_db"]) for row in rows], [float(row[key]) for row in rows], "*-", label="DeepJSCC")
         axis.set_xlabel("SNR η (dB)")
-        axis.set_ylabel("PSNR (dB)" if config["task"] == "image" else "NMSE (dB)")
+        axis.set_ylabel("PSNR (dB)")
         axis.set_title("Semantic clean performance")
         axis.grid(True, alpha=0.3)
         axis.legend()

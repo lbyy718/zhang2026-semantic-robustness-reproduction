@@ -1,4 +1,4 @@
-"""JSON configuration loading and paper-specific validation."""
+"""JSON configuration loading and CIFAR-10 experiment validation."""
 
 from __future__ import annotations
 
@@ -19,8 +19,8 @@ def load_config(path: str | Path) -> dict[str, Any]:
 
 def validate_config(config: dict[str, Any]) -> None:
     task = config.get("task")
-    if task not in {"image", "csi"}:
-        raise ValueError("config.task must be 'image' or 'csi'.")
+    if task != "image":
+        raise ValueError("This minimal repository only supports config.task='image'.")
     model = config.get("model", {})
     data = config.get("data", {})
     channels = int(model.get("in_channels", 0))
@@ -30,11 +30,7 @@ def validate_config(config: dict[str, Any]) -> None:
         raise ValueError("model requires positive in_channels/channel_multiplier and spatial_size.")
     if spatial[0] % 4 or spatial[1] % 4:
         raise ValueError("model.spatial_size must be divisible by four.")
-    real_channel_dimensions = 2 * multiplier * (spatial[0] // 4) * (spatial[1] // 4)
-    complex_symbols = bool(model.get("complex_symbols", False))
-    if complex_symbols and real_channel_dimensions % 2:
-        raise ValueError("Complex channel symbols require an even number of real dimensions.")
-    channel_uses = real_channel_dimensions // 2 if complex_symbols else real_channel_dimensions
+    channel_uses = 2 * multiplier * (spatial[0] // 4) * (spatial[1] // 4)
     source_dimension = channels * spatial[0] * spatial[1]
     expected_ratio = float(data.get("bandwidth_ratio", 0.25))
     actual_ratio = channel_uses / source_dimension
@@ -42,10 +38,9 @@ def validate_config(config: dict[str, Any]) -> None:
         raise ValueError(
             f"Model implies bandwidth ratio {actual_ratio:g}, not configured {expected_ratio:g}."
         )
-    expected_uses = 768 if task == "image" else 256
-    if channel_uses != expected_uses:
+    if channel_uses != 768:
         raise ValueError(
-            f"Paper setup for {task} requires {expected_uses} channel uses, got {channel_uses}."
+            f"The paper's CIFAR-10 setup requires 768 channel uses, got {channel_uses}."
         )
 
 
