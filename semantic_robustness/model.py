@@ -9,7 +9,12 @@ from __future__ import annotations
 
 import math
 
+import torch
 from torch import Tensor, nn
+
+
+CIFAR10_MEAN = (0.4914, 0.4822, 0.4465)
+CIFAR10_STD = (0.2470, 0.2435, 0.2616)
 
 
 class ResidualBlock(nn.Module):
@@ -183,6 +188,196 @@ class DeepJSCC(nn.Module):
     @property
     def channel_uses(self) -> int:
         return self.decoder.channel_uses
+
+    @property
+    def source_dimension(self) -> int:
+        return self.in_channels * math.prod(self.spatial_size)
+
+    @property
+    def bandwidth_ratio(self) -> float:
+        return self.channel_uses / self.source_dimension
+
+    def encode(self, inputs: Tensor) -> Tensor:
+        return self.encoder(inputs)
+
+    def decode(self, received: Tensor) -> Tensor:
+        return self.decoder(received)
+
+    def forward(self, inputs: Tensor, channel: nn.Module, snr_db: float | Tensor) -> Tensor:
+        return self.decode(channel(self.encode(inputs), snr_db))
+
+
+class ClassificationHead(nn.Module):
+    """Parameter-matched classifier operating on the same 768-symbol codeword."""
+
+    def __init__(self, channel_uses: int, hidden_features: int, num_classes: int) -> None:
+        super().__init__()
+        self.network = nn.Sequential(
+            nn.Linear(channel_uses, hidden_features),
+            nn.ReLU(inplace=True),
+            nn.Linear(hidden_features, num_classes),
+        )
+
+    def forward(self, received: Tensor) -> Tensor:
+        return self.network(received.flatten(start_dim=1))
+
+
+class DeepJSCCClassifier(nn.Module):
+    """Classification control sharing the exact DeepJSCC encoder and channel code."""
+
+    def __init__(
+        self,
+        in_channels: int = 3,
+        channel_multiplier: int = 6,
+        spatial_size: tuple[int, int] = (32, 32),
+        kernel_size: int = 3,
+        residual_kernel_size: int = 3,
+        classifier_hidden: int = 53,
+        num_classes: int = 10,
+    ) -> None:
+        super().__init__()
+        self.in_channels = in_channels
+        self.spatial_size = spatial_size
+        self.encoder = DeepJSCCEncoder(
+            in_channels,
+            channel_multiplier,
+            spatial_size=spatial_size,
+            kernel_size=kernel_size,
+            residual_kernel_size=residual_kernel_size,
+        )
+        channel_uses = 2 * channel_multiplier * (spatial_size[0] // 4) * (
+            spatial_size[1] // 4
+        )
+        self._channel_uses = channel_uses
+        # Keep the decoder attribute so latent-space attacks use the same interface.
+        self.decoder = ClassificationHead(
+            channel_uses, classifier_hidden, num_classes
+        )
+        self.apply(self._initialize)
+
+    @staticmethod
+    def _initialize(module: nn.Module) -> None:
+        if isinstance(module, (nn.Conv2d, nn.ConvTranspose2d, nn.Linear)):
+            nn.init.kaiming_normal_(module.weight, nonlinearity="relu")
+            if module.bias is not None:
+                nn.init.zeros_(module.bias)
+
+    @property
+    def channel_uses(self) -> int:
+        return self._channel_uses
+
+    @property
+    def source_dimension(self) -> int:
+        return self.in_channels * math.prod(self.spatial_size)
+
+    @property
+    def bandwidth_ratio(self) -> float:
+        return self.channel_uses / self.source_dimension
+
+    def encode(self, inputs: Tensor) -> Tensor:
+        return self.encoder(inputs)
+
+    def decode(self, received: Tensor) -> Tensor:
+        return self.decoder(received)
+
+    def forward(self, inputs: Tensor, channel: nn.Module, snr_db: float | Tensor) -> Tensor:
+        return self.decode(channel(self.encode(inputs), snr_db))
+
+
+class CIFAR10InputNormalizer(nn.Module):
+    """Differentiable CIFAR-10 normalization for models receiving [0, 1] images."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.register_buffer(
+            "mean", torch.tensor(CIFAR10_MEAN).reshape(1, 3, 1, 1)
+        )
+        self.register_buffer(
+            "std", torch.tensor(CIFAR10_STD).reshape(1, 3, 1, 1)
+        )
+
+    def forward(self, images: Tensor) -> Tensor:
+        if images.ndim != 4 or images.shape[1] != 3:
+            raise ValueError(
+                "CIFAR10InputNormalizer expects images shaped [batch, 3, H, W]."
+            )
+        return (images - self.mean) / self.std
+
+
+class ResNet18BottleneckEncoder(nn.Module):
+    """CIFAR ResNet-18 encoder followed by a unit-power 768-symbol bottleneck."""
+
+    def __init__(self, latent_dim: int = 768, feature_dim: int = 512) -> None:
+        super().__init__()
+        if latent_dim <= 0 or feature_dim != 512:
+            raise ValueError("ResNet-18 requires latent_dim > 0 and feature_dim=512.")
+        try:
+            from torchvision.models import resnet18
+        except ImportError as exc:  # pragma: no cover - explicit dependency error
+            raise ImportError("resnet18_bottleneck requires torchvision.") from exc
+
+        backbone = resnet18(weights=None)
+        backbone.conv1 = nn.Conv2d(
+            3, 64, kernel_size=3, stride=1, padding=1, bias=False
+        )
+        backbone.maxpool = nn.Identity()
+        backbone.fc = nn.Identity()
+        self.normalizer = CIFAR10InputNormalizer()
+        self.backbone = backbone
+        self.projection = nn.Linear(feature_dim, latent_dim)
+        self.power_normalizer = PowerNormalizer()
+        nn.init.kaiming_normal_(self.projection.weight, nonlinearity="linear")
+        nn.init.zeros_(self.projection.bias)
+
+    def forward(self, inputs: Tensor) -> Tensor:
+        features = self.backbone(self.normalizer(inputs))
+        return self.power_normalizer(self.projection(features))
+
+
+class DeepJSCCResNetClassifier(nn.Module):
+    """Strong classification control with an explicit semantic channel bottleneck.
+
+    The model is trained from scratch.  It is deliberately not the frozen
+    evaluator used by the reconstruction endpoint: only the CIFAR-style
+    ResNet-18 architecture is shared.
+    """
+
+    architecture = "resnet18_bottleneck"
+
+    def __init__(
+        self,
+        in_channels: int = 3,
+        spatial_size: tuple[int, int] = (32, 32),
+        latent_dim: int = 768,
+        feature_dim: int = 512,
+        classifier_hidden: int = 512,
+        num_classes: int = 10,
+    ) -> None:
+        super().__init__()
+        if in_channels != 3 or tuple(spatial_size) != (32, 32):
+            raise ValueError(
+                "resnet18_bottleneck currently supports 3x32x32 CIFAR images only."
+            )
+        if classifier_hidden <= 0 or num_classes < 2:
+            raise ValueError("classifier_hidden must be positive and num_classes >= 2.")
+        self.in_channels = in_channels
+        self.spatial_size = tuple(spatial_size)
+        self._channel_uses = int(latent_dim)
+        self.encoder = ResNet18BottleneckEncoder(
+            latent_dim=self._channel_uses, feature_dim=feature_dim
+        )
+        self.decoder = ClassificationHead(
+            self._channel_uses, int(classifier_hidden), int(num_classes)
+        )
+        for module in self.decoder.modules():
+            if isinstance(module, nn.Linear):
+                nn.init.kaiming_normal_(module.weight, nonlinearity="relu")
+                if module.bias is not None:
+                    nn.init.zeros_(module.bias)
+
+    @property
+    def channel_uses(self) -> int:
+        return self._channel_uses
 
     @property
     def source_dimension(self) -> int:

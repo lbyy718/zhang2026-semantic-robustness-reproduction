@@ -76,24 +76,45 @@ python run_semantic.py plot `
 正式配置使用 CIFAR-10 的 50,000/10,000 划分、batch size 512、AdamW、学习率 `1e-3`、1000 epoch、带宽比 `1/4`、训练 SNR 10 dB，以及 15 dB 攻击失败阈值。
 
 ```powershell
-python run_semantic.py train --config configs/image_cifar10.json --device cuda
+$formalOutput = "outputs/image_cifar10_full_run"
+
+python run_semantic.py train `
+  --config configs/image_cifar10.json `
+  --output $formalOutput `
+  --device cuda
 
 python run_semantic.py clean `
   --config configs/image_cifar10.json `
-  --checkpoint outputs/image_cifar10/checkpoint_best.pt `
+  --checkpoint "$formalOutput/checkpoint_best.pt" `
+  --output $formalOutput `
   --device cuda
+
+# 先用 quick 预算审计正式 checkpoint 的攻击流程
+python run_semantic.py attack `
+  --config configs/image_cifar10_quick.json `
+  --checkpoint "$formalOutput/checkpoint_best.pt" `
+  --output "$formalOutput/attack_audit_pga" `
+  --attacks pga `
+  --device cuda
+```
+
+确认小规模攻击没有零功率退化、低成功率或明显求解器敏感性后，再运行正式攻击：
+
+```powershell
+$formalOutput = "outputs/image_cifar10_full_run"
 
 python run_semantic.py attack `
   --config configs/image_cifar10.json `
-  --checkpoint outputs/image_cifar10/checkpoint_best.pt `
+  --checkpoint "$formalOutput/checkpoint_best.pt" `
+  --output $formalOutput `
   --attacks pga cw `
   --device cuda
 
 python run_semantic.py plot `
   --config configs/image_cifar10.json `
-  --clean-csv outputs/image_cifar10/clean_metrics.csv `
-  --attack-csv outputs/image_cifar10/attack_summary.csv `
-  --output outputs/image_cifar10/semantic_curves.png
+  --clean-csv "$formalOutput/clean_metrics.csv" `
+  --attack-csv "$formalOutput/attack_summary.csv" `
+  --output "$formalOutput/semantic_curves.png"
 ```
 
 C&W 对全部图像、全部 SNR 点和完整二分搜索运行非常耗时。调试时先复制 quick 配置并减小 `attacks.max_samples`、`evaluation.snr_db`、`binary_search_steps` 与 `max_steps`。
@@ -111,8 +132,9 @@ C&W 对全部图像、全部 SNR 点和完整二分搜索运行非常耗时。�
 
 ## 学习与后续研究
 
-- [代码学习路线](docs/LEARNING_PATH.md)
-- [鲁棒性论证审计](docs/ROBUSTNESS_CLAIM_AUDIT.md)
-- [任务—噪声—通信结构对照实验计划](docs/FACTORIAL_EXPERIMENT_PLAN.md)
+- [代码学习路线](docs/01_learning_path.md)
+- [鲁棒性论证审计](docs/02_robustness_claim_audit.md)
+- [正式训练结束后的验收与决策清单](docs/04_formal_training_evaluation.md)
+- [任务—噪声—通信结构对照实验计划](docs/05_factorial_experiment_plan.md)
 
 这些文档把“复现论文现象”和“验证其机制归因”分开：现有图像曲线只能支持特定配置下的经验趋势，不能证明语义通信具有普适或认证鲁棒性。

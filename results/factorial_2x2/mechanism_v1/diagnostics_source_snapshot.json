@@ -1,0 +1,57 @@
+{
+  "schema_version": "factorial_mechanism_v1",
+  "kind": "immutable mechanism source snapshot",
+  "created_at": "2026-08-13T08:58:35.258174+00:00",
+  "sources": [
+    {
+      "relative_path": "scripts/evaluate_mechanism_cell.py",
+      "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\scripts\\evaluate_mechanism_cell.py",
+      "sha256": "971402764b153f4801045727f501209083e8be30c89d1304613738fd5f8f2357"
+    },
+    {
+      "relative_path": "scripts/run_mechanism_batch.py",
+      "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\scripts\\run_mechanism_batch.py",
+      "sha256": "27160b63da3cdffc559e07d8aff37573c0d4f190c9e68f28ebf8fb9e7de6eb19"
+    },
+    {
+      "relative_path": "semantic_robustness/mechanism.py",
+      "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\semantic_robustness\\mechanism.py",
+      "sha256": "ab680b186de6f117e31f88bec8890c8ba1babd8261c279708bc288c83f848d1e"
+    },
+    {
+      "relative_path": "semantic_robustness/theory.py",
+      "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\semantic_robustness\\theory.py",
+      "sha256": "9eb98dcfc1eda683c14269b7413f192225bfc405e55f4b74b85b927d618f398d"
+    },
+    {
+      "relative_path": "semantic_robustness/attacks.py",
+      "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\semantic_robustness\\attacks.py",
+      "sha256": "51e2bb94c9545b8a51d5639ad80aa84ed3d0444795ee93e2c37faa260f1d8752"
+    },
+    {
+      "relative_path": "semantic_robustness/metrics.py",
+      "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\semantic_robustness\\metrics.py",
+      "sha256": "37c9df1b81b00270a8f7a00c33359075ece4af6e5281754a6759437e4d2e0b3e"
+    },
+    {
+      "relative_path": "semantic_robustness/channel.py",
+      "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\semantic_robustness\\channel.py",
+      "sha256": "7f090c04977aef227a94d400b31b5e9653f84e10eb93771d9208e9bebe7a650f"
+    },
+    {
+      "relative_path": "semantic_robustness/runtime.py",
+      "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\semantic_robustness\\runtime.py",
+      "sha256": "68b1186f00c6d27447b8b07ea537b9d1ab99feabbccca33ba1f6e4770abfcac5"
+    },
+    {
+      "relative_path": "semantic_robustness/model.py",
+      "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\semantic_robustness\\model.py",
+      "sha256": "9d22180729c2d2dba0e01a2b41f3c14cd29cd6d3ac7dc28e80149030cb5acfc5"
+    },
+    {
+      "relative_path": "semantic_robustness/semantic_evaluator.py",
+      "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\semantic_robustness\\semantic_evaluator.py",
+      "sha256": "34f3ee0b941d97d2f4b343fbfd4ad232f90a124a114ee80a605d8df62430efa7"
+    }
+  ]
+}

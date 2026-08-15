@@ -21,8 +21,9 @@
 2. `ASSUMPTIONS.md`：论文未披露而本实现必须补齐的细节。
 3. `configs/README.md`：正式、quick 和消融配置的关系。
 4. `results/README.md`：哪些结果可以作为现阶段证据。
+5. `docs/04_formal_training_evaluation.md`：1000 epoch 结束后的验收和下一步决策。
 
-这一阶段要牢牢记住：本项目是“语义通信侧概念与趋势复现”，不是作者官方源码，也没有实现传统 SSCC。当前结果不能独立验证论文的“14 倍/16 倍优于传统通信”比较。
+这一阶段要牢牢记住：本项目是“CIFAR-10 图像 DeepJSCC 概念与趋势复现”，不是作者官方源码，也没有实现其他数据模态或传统 SSCC。当前结果不能独立验证论文的“14 倍/16 倍优于传统通信”比较。
 
 ### 阶段验收
 
@@ -182,6 +183,8 @@ x
 
 这个练习也是后续“噪声训练是否导致鲁棒性”实验的预备步骤。
 
+注意：有限 SNR 都仍然含噪。正式 R0 无噪对照必须使用显式信道旁路/无噪开关，不能把 100 dB 等极高 SNR 静默当成严格无噪。
+
 ## 阶段 5：理解攻击和统计口径
 
 阅读 `semantic_robustness/attacks.py`：
@@ -230,7 +233,7 @@ x_adv = decoder(r_adv)
 2. 数值合法性检查；
 3. 局部 Jacobian 谱范数诊断。
 
-`estimate_local_lipschitz()` 估计的是给定接收点附近的局部 Jacobian 谱范数，不是论文假设的全局 Lipschitz 常数，也不是认证鲁棒性下界。详细逻辑问题见 `docs/ROBUSTNESS_CLAIM_AUDIT.md`。
+`estimate_local_lipschitz()` 估计的是给定接收点附近的局部 Jacobian 谱范数，不是论文假设的全局 Lipschitz 常数，也不是认证鲁棒性下界。详细逻辑问题见 `docs/02_robustness_claim_audit.md`。
 
 ### 阶段验收
 
@@ -249,6 +252,18 @@ x_adv = decoder(r_adv)
 - `tests/test_runtime.py`：微型训练—clean—攻击闭环。
 
 测试通过只表示实现满足当前约定，不表示论文结论已经被证明。学习完成的最终标准是：你可以指出每个测试保护了什么，同时指出它无法验证什么。
+
+## 阶段 8：验收正式训练并进入机制实验
+
+1000 epoch 完成后，按 `docs/04_formal_training_evaluation.md` 依次检查：
+
+1. 训练日志、最佳 epoch、最后 epoch 和可重复性；
+2. 正式 clean PSNR–SNR 曲线；
+3. 正式 checkpoint 上的小规模 PGA/C&W 审计；
+4. 步长、迭代、重启和阈值敏感性；
+5. R0（无噪重建）与当前 R1（有噪重建）对照。
+
+先完成 R0/R1，可以用最少新增训练直接检验 noisy-channel-training 解释；随后再实现 C0/C1 分类分支，完成任务×噪声 2×2。
 
 ## 推荐学习产出
 

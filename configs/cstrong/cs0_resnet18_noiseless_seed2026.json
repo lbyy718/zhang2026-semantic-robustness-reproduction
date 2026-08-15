@@ -1,0 +1,65 @@
+{
+  "task": "image",
+  "objective": "classification",
+  "experiment_cell": "CS0",
+  "seed": 2026,
+  "deterministic": true,
+  "output_dir": "../../outputs/cstrong_pilot/cs0_seed2026",
+  "data": {
+    "root": "../../data/cifar10",
+    "download": false,
+    "bandwidth_ratio": 0.25,
+    "batch_size": 64,
+    "evaluation_batch_size": 256,
+    "validation_source": "train_holdout",
+    "validation_samples": 5000,
+    "split_seed": 2026,
+    "augmentation": "cifar_standard",
+    "num_workers": 0
+  },
+  "model": {
+    "architecture": "resnet18_bottleneck",
+    "in_channels": 3,
+    "spatial_size": [32, 32],
+    "feature_dim": 512,
+    "latent_dim": 768,
+    "classifier_hidden": 512,
+    "num_classes": 10
+  },
+  "channel": {"fading_gain": 1.0},
+  "training": {
+    "epochs": 200,
+    "loss": "cross_entropy",
+    "optimizer": "sgd",
+    "learning_rate": 0.05,
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "scheduler": "cosine",
+    "channel_noise": false,
+    "snr_db": 10.0,
+    "validation_snr_db": 10.0,
+    "validation_noise_seed": 72026,
+    "regularizer": "none",
+    "jacobian_target_ratio": 0.1,
+    "early_stopping_patience": 30,
+    "early_stopping_min_delta": 0.0001,
+    "amp": true,
+    "checkpoint_interval": 10
+  },
+  "evaluation": {
+    "snr_db": [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
+    "max_samples": 1000,
+    "channel_repeats": 3,
+    "selection_seed": 42026
+  },
+  "attacks": {
+    "max_samples": 1000,
+    "pga": {
+      "step_size": 0.1,
+      "eps": 1e-8,
+      "max_steps": 2000,
+      "refine_steps": 0,
+      "batch_size": 32
+    }
+  }
+}

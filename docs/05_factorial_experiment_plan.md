@@ -3,17 +3,23 @@
 ## Material Passport
 
 - Origin Skill: academic-research-suite / experiment-agent
-- Origin Mode: plan
+- Origin Mode: plan + run + validate
 - Origin Date: 2026-08-12
-- Verification Status: UNVERIFIED
-- Version Label: code_plan_v1
+- Verification Status: PARTIALLY VERIFIED（核心 2×2 已完成；通信结构、Jacobian 与确认性攻击待完成）
+- Version Label: code_plan_v3
 
 ## 实验概览
 
 - **标题：**拆解 DeepJSCC 经验鲁棒性的任务、噪声与通信结构来源
 - **目标：**判断论文报告的高攻击功率主要来自连续重建、随机噪声训练、通信瓶颈/功率约束，还是三者交互。
 - **类型：**PyTorch 模型训练、白盒攻击、局部敏感性诊断和因子分析。
-- **当前阶段：**实验设计；尚未实现分类分支和尚未启动新训练。
+- **当前阶段：**核心 2×2 已完成：R0/R1/C0/C1 × seeds 2026/2027/2028，共 12 次 1000-epoch 训练；统一 clean SNR 评估与 10 dB/128 样本探索性 PGA 已完成。结果支持噪声训练的跨任务效应，但通信结构、局部 Jacobian、margin 匹配与确认性攻击仍待验证。长期结果见 [三种子正式结果](08_factorial_2x2_results.md)。
+
+### 当前基线的角色
+
+`outputs/image_cifar10_full_20260812/` 对应 R1：连续重建、10 dB AWGN 训练、功率归一化和 768 维通信瓶颈。它用于确认基线可训练并生成 clean/attack 参照，不属于已经完成的因果对照。
+
+R1 训练完成后先执行 [正式训练结束后的验收与决策清单](04_formal_training_evaluation.md)。只有完成 clean 曲线和攻击求解器审计，才进入 R0/R1 因果比较。
 
 ## 研究问题
 
@@ -281,19 +287,28 @@ Noise training
 
 ## 实施阶段
 
+### Baseline：冻结当前 R1
+
+- 完成当前 1000 epoch 重建模型。
+- 固定 `checkpoint_best.pt`、配置、代码 commit 和训练日志。
+- 生成 clean 曲线并先做小样本 PGA/C&W 强度审计。
+- 训练损失收敛只算“基线可训练”，不算“鲁棒性已复现”。
+
 ### Phase 0：锁定口径
 
 - 写出主研究问题和主指标。
 - 确定无噪/有噪定义、攻击位置、功率口径和失败事件。
 - 固定种子、SNR、阈值与训练预算。
-- 不训练正式模型。
+- 不启动新的因子实验正式模型；当前 R1 基线可以继续完成。
 
-### Phase 1：重构最小公共接口
+### Phase 1：重构最小公共接口（已完成）
 
 - 保留当前 reconstruction task。
 - 新增 classification task/head。
 - 让两个任务共用 encoder、channel、功率归一化、训练框架和攻击接口。
 - 新增形状、功率、分类阈值和攻击成功测试。
+
+当前实现的精确配置和命令见 [R0/R1、C0/C1 配置与运行指南](06_factorial_config_guide.md)。分类 head 与重建 decoder 参数量差约 0.89%，攻击位置统一为接收 latent；分类失败事件使用真实类别 logit margin 到零。
 
 ### Phase 2：小规模可行性检查
 
@@ -302,11 +317,20 @@ Noise training
 - 检查输出 CSV/JSON 字段一致。
 - 只修复实现问题，不根据结果更换假设。
 
-### Phase 3：核心 2×2 正式训练
+### 推荐的资源顺序
 
-- 先跑 3 个独立种子。
-- 生成 clean、attack、Jacobian 和阈值敏感性结果。
-- 若效应远大于种子波动，再扩展到 5 个种子。
+1. 先实现显式无噪开关，只增加 R0，与当前 R1 直接比较。
+2. R0/R1 quick 通过后，完成三个相同训练种子的重建噪声对照。
+3. 再加入分类头，形成 C0/C1，并先跑四组 quick。
+4. 四组接口和攻击口径一致后，才运行完整 2×2 正式训练。
+
+确认性实验中的 R0 应真正绕过训练噪声；极高 SNR 只能作为工程近似或敏感性分析，不能静默等同于严格无噪。
+
+### Phase 3：核心 2×2 正式训练（已完成）
+
+- 已完成 3 个独立种子及 clean 曲线。
+- 已完成单起点 PGA 探索性攻击；Jacobian、阈值敏感性和独立攻击交叉验证尚未完成。
+- 重建效应远大于种子波动；分类效应方向一致但 n=3 区间较宽，是否扩展到 5 个种子应在确认性攻击口径冻结后决定。
 
 ### Phase 4：通信结构与攻击强度消融
 

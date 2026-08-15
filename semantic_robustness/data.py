@@ -29,11 +29,17 @@ def cifar10_datasets(
 
 
 def unwrap_batch(batch: Any) -> Tensor:
+    return unpack_batch(batch)[0]
+
+
+def unpack_batch(batch: Any) -> tuple[Tensor, Tensor | None]:
+    """Return inputs and optional labels without breaking reconstruction callers."""
     if isinstance(batch, Tensor):
-        return batch
+        return batch, None
     if isinstance(batch, (tuple, list)) and batch and isinstance(batch[0], Tensor):
-        return batch[0]
-    raise TypeError(f"Cannot extract input tensor from batch type {type(batch)!r}.")
+        labels = batch[1] if len(batch) > 1 and isinstance(batch[1], Tensor) else None
+        return batch[0], labels
+    raise TypeError(f"Cannot extract tensors from batch type {type(batch)!r}.")
 
 
 def limited_dataset(dataset: Dataset[Any], max_samples: int | None) -> Dataset[Any]:

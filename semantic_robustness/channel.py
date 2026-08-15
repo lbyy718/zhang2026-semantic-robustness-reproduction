@@ -40,3 +40,16 @@ class AWGNChannel(nn.Module):
         elif noise.shape != symbols.shape:
             raise ValueError("Explicit noise must have the same shape as symbols.")
         return self.fading_gain * symbols + noise
+
+
+class NoiselessChannel(nn.Module):
+    """Identity channel used by the R0/C0 no-noise controls."""
+
+    def forward(
+        self,
+        symbols: Tensor,
+        snr_db: float | Tensor | None = None,
+        **_: object,
+    ) -> Tensor:
+        del snr_db
+        return symbols

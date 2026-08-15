@@ -1,5 +1,5 @@
 {
-  "scope": "semantic-only clean evaluation",
+  "scope": "cifar10-image-only clean evaluation",
   "checkpoint": "outputs/image_cifar10_quick/checkpoint_best.pt",
   "task": "image",
   "rows": [

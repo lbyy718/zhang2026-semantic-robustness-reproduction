@@ -1,0 +1,673 @@
+{
+  "status": "completed",
+  "input_validation": {
+    "jobs": 36,
+    "rows": 36000,
+    "rows_per_job": 1000,
+    "cells": [
+      "C0",
+      "C1",
+      "R0",
+      "R1"
+    ],
+    "training_seeds": [
+      2026,
+      2027,
+      2028
+    ],
+    "repeat_indices": [
+      0,
+      1,
+      2
+    ]
+  },
+  "endpoint": "shared CIFAR-10 semantic misclassification endpoint",
+  "pga_empirical_bound_policy_not_certified": {
+    "clean_semantic_error": 0.0,
+    "clean_correct_and_pga_success": "PGA attack power per channel use",
+    "clean_correct_and_pga_unsuccessful_lower_bound": "treated as non-robust at every positive plotted budget; deliberately conservative",
+    "clean_correct_and_pga_unsuccessful_upper_bound": "treated as surviving every plotted budget (infinity); optimistic right-censored bound",
+    "certified_robustness": false
+  },
+  "pga_empirical_robust_accuracy_power_grid_db": [
+    -40.0,
+    -39.0,
+    -38.0,
+    -37.0,
+    -36.0,
+    -35.0,
+    -34.0,
+    -33.0,
+    -32.0,
+    -31.0,
+    -30.0,
+    -29.0,
+    -28.0,
+    -27.0,
+    -26.0,
+    -25.0,
+    -24.0,
+    -23.0,
+    -22.0,
+    -21.0,
+    -20.0,
+    -19.0,
+    -18.0,
+    -17.0,
+    -16.0,
+    -15.0,
+    -14.0,
+    -13.0,
+    -12.0,
+    -11.0,
+    -10.0,
+    -9.0,
+    -8.0,
+    -7.0,
+    -6.0,
+    -5.0,
+    -4.0,
+    -3.0,
+    -2.0,
+    -1.0,
+    0.0
+  ],
+  "operational_auc_and_retention": "descriptive summaries on the fixed [-40, 0] dB grid; AUC uses a trapezoidal approximation to stepwise empirical curves",
+  "primary_within_task_scope": "pairwise_common_clean_correct",
+  "four_cell_scope": "cross-task descriptive only",
+  "inference_unit": "training seed; all channel repeats averaged within seed",
+  "pga_estimated_empirical_system_results": {
+    "R0": {
+      "clean_semantic_accuracy_repeat_mean": {
+        "mean": 0.19566666666666666,
+        "sd_across_training_seeds": 0.02445631025136685,
+        "training_seeds": 3
+      },
+      "pga_success_rate_among_all_clean_correct_repeat_mean": {
+        "mean": 1.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_success_rate_pairwise_common_repeat_mean": {
+        "mean": 1.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_all_lower_bound": {
+        "mean": 0.008597222222222221,
+        "sd_across_training_seeds": 0.0005363413437700255,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_all_upper_bound": {
+        "mean": 0.008597222222222221,
+        "sd_across_training_seeds": 0.0005363413437700255,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_pairwise_common_clean_correct_lower_bound": {
+        "mean": 0.04711653766604727,
+        "sd_across_training_seeds": 0.007234271878780618,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_pairwise_common_clean_correct_upper_bound": {
+        "mean": 0.04711653766604727,
+        "sd_across_training_seeds": 0.007234271878780618,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_four_cell_common_clean_correct_lower_bound": {
+        "mean": 0.048570015411564915,
+        "sd_across_training_seeds": 0.0039833970247295835,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_four_cell_common_clean_correct_upper_bound": {
+        "mean": 0.048570015411564915,
+        "sd_across_training_seeds": 0.0039833970247295835,
+        "training_seeds": 3
+      },
+      "semantic_failure_margin_geomean_repeat_mean": {
+        "mean": 1.9754841049552119,
+        "sd_across_training_seeds": 0.09581926738276651,
+        "training_seeds": 3
+      },
+      "semantic_margin_gradient_l2_geomean_repeat_mean": {
+        "mean": 13.134080052477241,
+        "sd_across_training_seeds": 1.7004514406110498,
+        "training_seeds": 3
+      },
+      "semantic_linearized_distance_l2_geomean_repeat_mean": {
+        "mean": 0.15169964085314624,
+        "sd_across_training_seeds": 0.016599131708320735,
+        "training_seeds": 3
+      },
+      "semantic_spectral_norm_geomean_repeat_mean": {
+        "mean": 10.809577158809478,
+        "sd_across_training_seeds": 1.5531058511072244,
+        "training_seeds": 3
+      },
+      "spectral_convergence_rate_repeat_mean": {
+        "mean": 0.9995555555555555,
+        "sd_across_training_seeds": 0.00019245008972991815,
+        "training_seeds": 3
+      },
+      "pearson_ln_linear_distance_vs_ln_pga_l2_fisher_z_repeat_mean": {
+        "mean": 0.9016046240752004,
+        "sd_across_training_seeds": 0.016018088582956135,
+        "training_seeds": 3
+      }
+    },
+    "R1": {
+      "clean_semantic_accuracy_repeat_mean": {
+        "mean": 0.724,
+        "sd_across_training_seeds": 0.02515949125081827,
+        "training_seeds": 3
+      },
+      "pga_success_rate_among_all_clean_correct_repeat_mean": {
+        "mean": 1.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_success_rate_pairwise_common_repeat_mean": {
+        "mean": 1.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_all_lower_bound": {
+        "mean": 0.13684305555555556,
+        "sd_across_training_seeds": 0.0075154613008660085,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_all_upper_bound": {
+        "mean": 0.13684305555555556,
+        "sd_across_training_seeds": 0.0075154613008660085,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_pairwise_common_clean_correct_lower_bound": {
+        "mean": 0.2153600319350789,
+        "sd_across_training_seeds": 0.006727846549729134,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_pairwise_common_clean_correct_upper_bound": {
+        "mean": 0.2153600319350789,
+        "sd_across_training_seeds": 0.006727846549729134,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_four_cell_common_clean_correct_lower_bound": {
+        "mean": 0.2594556613901835,
+        "sd_across_training_seeds": 0.00721098242674534,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_four_cell_common_clean_correct_upper_bound": {
+        "mean": 0.2594556613901835,
+        "sd_across_training_seeds": 0.00721098242674534,
+        "training_seeds": 3
+      },
+      "semantic_failure_margin_geomean_repeat_mean": {
+        "mean": 4.748656557730756,
+        "sd_across_training_seeds": 0.20164101579804392,
+        "training_seeds": 3
+      },
+      "semantic_margin_gradient_l2_geomean_repeat_mean": {
+        "mean": 6.05388602415432,
+        "sd_across_training_seeds": 0.12927295511592687,
+        "training_seeds": 3
+      },
+      "semantic_linearized_distance_l2_geomean_repeat_mean": {
+        "mean": 0.7854514243090448,
+        "sd_across_training_seeds": 0.04939594913775726,
+        "training_seeds": 3
+      },
+      "semantic_spectral_norm_geomean_repeat_mean": {
+        "mean": 5.81637585476502,
+        "sd_across_training_seeds": 0.08163995933742792,
+        "training_seeds": 3
+      },
+      "spectral_convergence_rate_repeat_mean": {
+        "mean": 0.9997777777777778,
+        "sd_across_training_seeds": 0.0003849001794597722,
+        "training_seeds": 3
+      },
+      "pearson_ln_linear_distance_vs_ln_pga_l2_fisher_z_repeat_mean": {
+        "mean": 0.95883257244674,
+        "sd_across_training_seeds": 0.0023802449735352885,
+        "training_seeds": 3
+      }
+    },
+    "C0": {
+      "clean_semantic_accuracy_repeat_mean": {
+        "mean": 0.5795555555555555,
+        "sd_across_training_seeds": 0.010458028990702311,
+        "training_seeds": 3
+      },
+      "pga_success_rate_among_all_clean_correct_repeat_mean": {
+        "mean": 1.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_success_rate_pairwise_common_repeat_mean": {
+        "mean": 1.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_all_lower_bound": {
+        "mean": 0.11173194444444444,
+        "sd_across_training_seeds": 0.015315810488704987,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_all_upper_bound": {
+        "mean": 0.11173194444444444,
+        "sd_across_training_seeds": 0.015315810488704987,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_pairwise_common_clean_correct_lower_bound": {
+        "mean": 0.21193521931572465,
+        "sd_across_training_seeds": 0.020568112852136538,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_pairwise_common_clean_correct_upper_bound": {
+        "mean": 0.21193521931572465,
+        "sd_across_training_seeds": 0.020568112852136538,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_four_cell_common_clean_correct_lower_bound": {
+        "mean": 0.21715040055287174,
+        "sd_across_training_seeds": 0.023308623705351996,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_four_cell_common_clean_correct_upper_bound": {
+        "mean": 0.21715040055287174,
+        "sd_across_training_seeds": 0.023308623705351996,
+        "training_seeds": 3
+      },
+      "semantic_failure_margin_geomean_repeat_mean": {
+        "mean": 1.4379482677680362,
+        "sd_across_training_seeds": 0.12356813747224873,
+        "training_seeds": 3
+      },
+      "semantic_margin_gradient_l2_geomean_repeat_mean": {
+        "mean": 2.89442062801797,
+        "sd_across_training_seeds": 0.3117691738905437,
+        "training_seeds": 3
+      },
+      "semantic_linearized_distance_l2_geomean_repeat_mean": {
+        "mean": 0.5014303988299981,
+        "sd_across_training_seeds": 0.07440333764522905,
+        "training_seeds": 3
+      },
+      "semantic_spectral_norm_geomean_repeat_mean": {
+        "mean": 3.534018062251071,
+        "sd_across_training_seeds": 0.36165377519665864,
+        "training_seeds": 3
+      },
+      "spectral_convergence_rate_repeat_mean": {
+        "mean": 0.9972222222222222,
+        "sd_across_training_seeds": 0.0005091750772173079,
+        "training_seeds": 3
+      },
+      "pearson_ln_linear_distance_vs_ln_pga_l2_fisher_z_repeat_mean": {
+        "mean": 0.965497647797067,
+        "sd_across_training_seeds": 0.00446773898365792,
+        "training_seeds": 3
+      }
+    },
+    "C1": {
+      "clean_semantic_accuracy_repeat_mean": {
+        "mean": 0.6113333333333333,
+        "sd_across_training_seeds": 0.030179095045706362,
+        "training_seeds": 3
+      },
+      "pga_success_rate_among_all_clean_correct_repeat_mean": {
+        "mean": 1.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_success_rate_pairwise_common_repeat_mean": {
+        "mean": 1.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_all_lower_bound": {
+        "mean": 0.1555861111111111,
+        "sd_across_training_seeds": 0.013654372222370264,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_all_upper_bound": {
+        "mean": 0.1555861111111111,
+        "sd_across_training_seeds": 0.013654372222370264,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_pairwise_common_clean_correct_lower_bound": {
+        "mean": 0.28369542218588184,
+        "sd_across_training_seeds": 0.008302670513462482,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_pairwise_common_clean_correct_upper_bound": {
+        "mean": 0.28369542218588184,
+        "sd_across_training_seeds": 0.008302670513462482,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_four_cell_common_clean_correct_lower_bound": {
+        "mean": 0.2802805371997952,
+        "sd_across_training_seeds": 0.02887082290250211,
+        "training_seeds": 3
+      },
+      "pga_operational_auc_normalized_four_cell_common_clean_correct_upper_bound": {
+        "mean": 0.2802805371997952,
+        "sd_across_training_seeds": 0.02887082290250211,
+        "training_seeds": 3
+      },
+      "semantic_failure_margin_geomean_repeat_mean": {
+        "mean": 1.5066493474026281,
+        "sd_across_training_seeds": 0.26374622085569327,
+        "training_seeds": 3
+      },
+      "semantic_margin_gradient_l2_geomean_repeat_mean": {
+        "mean": 2.103199901084696,
+        "sd_across_training_seeds": 0.24887753796190254,
+        "training_seeds": 3
+      },
+      "semantic_linearized_distance_l2_geomean_repeat_mean": {
+        "mean": 0.7130175535120155,
+        "sd_across_training_seeds": 0.04423960508211515,
+        "training_seeds": 3
+      },
+      "semantic_spectral_norm_geomean_repeat_mean": {
+        "mean": 2.6453644400970298,
+        "sd_across_training_seeds": 0.28257606738370666,
+        "training_seeds": 3
+      },
+      "spectral_convergence_rate_repeat_mean": {
+        "mean": 0.9974444444444445,
+        "sd_across_training_seeds": 0.00050917507721732,
+        "training_seeds": 3
+      },
+      "pearson_ln_linear_distance_vs_ln_pga_l2_fisher_z_repeat_mean": {
+        "mean": 0.9672919154296183,
+        "sd_across_training_seeds": 0.004083495627030815,
+        "training_seeds": 3
+      }
+    }
+  },
+  "paired_local_identity_diagnostics": {
+    "R1_minus_R0": {
+      "mean_delta_ln_margin": {
+        "mean": 0.9423223146935776,
+        "sd_across_training_seeds": 0.053448894787346296,
+        "training_seeds": 3
+      },
+      "mean_delta_ln_gradient": {
+        "mean": -0.877511809063947,
+        "sd_across_training_seeds": 0.15509787022699478,
+        "training_seeds": 3
+      },
+      "mean_delta_ln_linearized_distance": {
+        "mean": 1.8198341228817714,
+        "sd_across_training_seeds": 0.13886342051378173,
+        "training_seeds": 3
+      },
+      "mean_complete_case_delta_ln_pga_attack_l2": {
+        "mean": 1.0721054557790406,
+        "sd_across_training_seeds": 0.09088835293137344,
+        "training_seeds": 3
+      },
+      "mean_delta_ln_semantic_spectral_norm": {
+        "mean": -0.8362682987216266,
+        "sd_across_training_seeds": 0.16284886072452703,
+        "training_seeds": 3
+      },
+      "pga_both_success_rate_repeat_mean": {
+        "mean": 1.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_off_only_success_rate_repeat_mean": {
+        "mean": 0.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_on_only_success_rate_repeat_mean": {
+        "mean": 0.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_neither_success_rate_repeat_mean": {
+        "mean": 0.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "delta_pga_operational_auc_normalized_all_lower_bound": {
+        "mean": 0.12824583333333334,
+        "sd_across_training_seeds": 0.0077633990354311335,
+        "training_seeds": 3
+      },
+      "delta_pga_operational_auc_normalized_all_upper_bound": {
+        "mean": 0.12824583333333334,
+        "sd_across_training_seeds": 0.0077633990354311335,
+        "training_seeds": 3
+      },
+      "delta_pga_operational_auc_normalized_pairwise_common_clean_correct_lower_bound": {
+        "mean": 0.16824349426903162,
+        "sd_across_training_seeds": 0.013262990312426145,
+        "training_seeds": 3
+      },
+      "delta_pga_operational_auc_normalized_pairwise_common_clean_correct_upper_bound": {
+        "mean": 0.16824349426903162,
+        "sd_across_training_seeds": 0.013262990312426145,
+        "training_seeds": 3
+      }
+    },
+    "C1_minus_C0": {
+      "mean_delta_ln_margin": {
+        "mean": 0.08189656330437065,
+        "sd_across_training_seeds": 0.12336324676555208,
+        "training_seeds": 3
+      },
+      "mean_delta_ln_gradient": {
+        "mean": -0.3186128138142258,
+        "sd_across_training_seeds": 0.2084800397949086,
+        "training_seeds": 3
+      },
+      "mean_delta_ln_linearized_distance": {
+        "mean": 0.4005093771982612,
+        "sd_across_training_seeds": 0.08783214190524516,
+        "training_seeds": 3
+      },
+      "mean_complete_case_delta_ln_pga_attack_l2": {
+        "mean": 0.3720441600968209,
+        "sd_across_training_seeds": 0.07541054606194787,
+        "training_seeds": 3
+      },
+      "mean_delta_ln_semantic_spectral_norm": {
+        "mean": -0.2890463203504018,
+        "sd_across_training_seeds": 0.206151792550079,
+        "training_seeds": 3
+      },
+      "pga_both_success_rate_repeat_mean": {
+        "mean": 1.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_off_only_success_rate_repeat_mean": {
+        "mean": 0.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_on_only_success_rate_repeat_mean": {
+        "mean": 0.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "pga_neither_success_rate_repeat_mean": {
+        "mean": 0.0,
+        "sd_across_training_seeds": 0.0,
+        "training_seeds": 3
+      },
+      "delta_pga_operational_auc_normalized_all_lower_bound": {
+        "mean": 0.04385416666666666,
+        "sd_across_training_seeds": 0.0060292012208178125,
+        "training_seeds": 3
+      },
+      "delta_pga_operational_auc_normalized_all_upper_bound": {
+        "mean": 0.04385416666666666,
+        "sd_across_training_seeds": 0.0060292012208178125,
+        "training_seeds": 3
+      },
+      "delta_pga_operational_auc_normalized_pairwise_common_clean_correct_lower_bound": {
+        "mean": 0.07176020287015718,
+        "sd_across_training_seeds": 0.012946318900912114,
+        "training_seeds": 3
+      },
+      "delta_pga_operational_auc_normalized_pairwise_common_clean_correct_upper_bound": {
+        "mean": 0.07176020287015718,
+        "sd_across_training_seeds": 0.012946318900912114,
+        "training_seeds": 3
+      }
+    }
+  },
+  "post_treatment_margin_matched_sensitivity": {
+    "R1_minus_R0": {
+      "analysis_type": "post-treatment log-margin matched sensitivity analysis",
+      "causal_interpretation": false,
+      "eligible_off": 1761,
+      "eligible_on": 6516,
+      "eligible_pair_capacity_within_class_seed_repeat": 1761,
+      "matched_sample_repeat_pairs": 1194,
+      "match_rate_of_pair_capacity": 0.6780238500851788,
+      "matched_log_margin_smd": 0.005942366062177879,
+      "per_training_seed_audit": {
+        "2026": {
+          "eligible_off": 521,
+          "eligible_on": 2220,
+          "eligible_pair_capacity_within_class_repeat": 521,
+          "matched_pairs": 332,
+          "match_rate_of_pair_capacity": 0.6372360844529751,
+          "covered_repeats": [
+            0,
+            1,
+            2
+          ],
+          "all_expected_repeats_covered": true,
+          "matched_log_margin_smd": 0.00982804124369813,
+          "absolute_smd_below_limit": true
+        },
+        "2027": {
+          "eligible_off": 574,
+          "eligible_on": 2085,
+          "eligible_pair_capacity_within_class_repeat": 574,
+          "matched_pairs": 402,
+          "match_rate_of_pair_capacity": 0.7003484320557491,
+          "covered_repeats": [
+            0,
+            1,
+            2
+          ],
+          "all_expected_repeats_covered": true,
+          "matched_log_margin_smd": 0.00013796876028041212,
+          "absolute_smd_below_limit": true
+        },
+        "2028": {
+          "eligible_off": 666,
+          "eligible_on": 2211,
+          "eligible_pair_capacity_within_class_repeat": 666,
+          "matched_pairs": 460,
+          "match_rate_of_pair_capacity": 0.6906906906906907,
+          "covered_repeats": [
+            0,
+            1,
+            2
+          ],
+          "all_expected_repeats_covered": true,
+          "matched_log_margin_smd": 0.008104731517688531,
+          "absolute_smd_below_limit": true
+        }
+      },
+      "qualification_rule": "pairs >= 200; overall and every-seed absolute matched log-margin SMD < 0.1; exactly three training seeds; every seed covers every expected channel repeat",
+      "qualified": true,
+      "inference_unit": "training seed; channel repeats averaged within seed",
+      "delta_ln_gradient_mean_across_training_seeds": -0.21079375841762868,
+      "delta_ln_gradient_sd_across_training_seeds": 0.15605030274292764,
+      "delta_ln_linearized_distance_mean_across_training_seeds": 0.21602549870419563,
+      "delta_ln_linearized_distance_sd_across_training_seeds": 0.15629133255370659,
+      "complete_case_delta_ln_pga_attack_l2_mean_across_training_seeds": 0.15178750548120026,
+      "complete_case_delta_ln_pga_attack_l2_sd_across_training_seeds": 0.12793774355926374,
+      "delta_ln_semantic_spectral_norm_mean_across_training_seeds": -0.23326900934724565,
+      "delta_ln_semantic_spectral_norm_sd_across_training_seeds": 0.16421834017794848
+    },
+    "C1_minus_C0": {
+      "analysis_type": "post-treatment log-margin matched sensitivity analysis",
+      "causal_interpretation": false,
+      "eligible_off": 5216,
+      "eligible_on": 5502,
+      "eligible_pair_capacity_within_class_seed_repeat": 5070,
+      "matched_sample_repeat_pairs": 4145,
+      "match_rate_of_pair_capacity": 0.8175542406311637,
+      "matched_log_margin_smd": -0.00033390682221575086,
+      "per_training_seed_audit": {
+        "2026": {
+          "eligible_off": 1703,
+          "eligible_on": 1742,
+          "eligible_pair_capacity_within_class_repeat": 1625,
+          "matched_pairs": 1324,
+          "match_rate_of_pair_capacity": 0.8147692307692308,
+          "covered_repeats": [
+            0,
+            1,
+            2
+          ],
+          "all_expected_repeats_covered": true,
+          "matched_log_margin_smd": -0.0023984280561126447,
+          "absolute_smd_below_limit": true
+        },
+        "2027": {
+          "eligible_off": 1751,
+          "eligible_on": 1923,
+          "eligible_pair_capacity_within_class_repeat": 1740,
+          "matched_pairs": 1412,
+          "match_rate_of_pair_capacity": 0.8114942528735632,
+          "covered_repeats": [
+            0,
+            1,
+            2
+          ],
+          "all_expected_repeats_covered": true,
+          "matched_log_margin_smd": 4.2850027422964085e-05,
+          "absolute_smd_below_limit": true
+        },
+        "2028": {
+          "eligible_off": 1762,
+          "eligible_on": 1837,
+          "eligible_pair_capacity_within_class_repeat": 1705,
+          "matched_pairs": 1409,
+          "match_rate_of_pair_capacity": 0.8263929618768329,
+          "covered_repeats": [
+            0,
+            1,
+            2
+          ],
+          "all_expected_repeats_covered": true,
+          "matched_log_margin_smd": 0.001305748629407007,
+          "absolute_smd_below_limit": true
+        }
+      },
+      "qualification_rule": "pairs >= 200; overall and every-seed absolute matched log-margin SMD < 0.1; exactly three training seeds; every seed covers every expected channel repeat",
+      "qualified": true,
+      "inference_unit": "training seed; channel repeats averaged within seed",
+      "delta_ln_gradient_mean_across_training_seeds": -0.3171228583396884,
+      "delta_ln_gradient_sd_across_training_seeds": 0.2077971573669194,
+      "delta_ln_linearized_distance_mean_across_training_seeds": 0.3167676446489484,
+      "delta_ln_linearized_distance_sd_across_training_seeds": 0.2061586658246294,
+      "complete_case_delta_ln_pga_attack_l2_mean_across_training_seeds": 0.29416163523021177,
+      "complete_case_delta_ln_pga_attack_l2_sd_across_training_seeds": 0.17650454390245549,
+      "delta_ln_semantic_spectral_norm_mean_across_training_seeds": -0.2893432623558378,
+      "delta_ln_semantic_spectral_norm_sd_across_training_seeds": 0.20634307293242166
+    }
+  },
+  "interpretation_limits": [
+    "PGA is retained as the single attack solver; solver-optimality is not established.",
+    "The lower/upper PGA envelopes are conservative/optimistic empirical conventions, not certified bounds on true robustness.",
+    "Jacobian and margin-gradient quantities are local, not a global Lipschitz constant.",
+    "The log-distance equation is an algebraic identity, not a causal mechanism decomposition.",
+    "Margin matching conditions on a post-training variable and is sensitivity analysis, not causal adjustment.",
+    "Cross-task semantic evaluation uses a shared failure event but different system mappings.",
+    "The four-cell common-correct scope is descriptive; within-task contrasts use pairwise common-correct samples.",
+    "Only three independent training seeds are available."
+  ]
+}

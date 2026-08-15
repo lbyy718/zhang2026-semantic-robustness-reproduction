@@ -1,0 +1,510 @@
+{
+  "schema_version": "factorial_mechanism_v1",
+  "experiment": "common semantic endpoint and local sensitivity diagnostics",
+  "status": "completed",
+  "created_at": "2026-08-13T08:58:35.277490+00:00",
+  "resumed_at": null,
+  "stale_lock_recovered": null,
+  "batch_signature": "b2426a4c9e7f75be2cfe3ee9a9d9809ac68ee8b950168f080269d3649f27e577",
+  "signature_payload": {
+    "schema_version": "factorial_mechanism_v1",
+    "cells": [
+      "r0",
+      "r1",
+      "c0",
+      "c1"
+    ],
+    "training_seeds": [
+      2026,
+      2027,
+      2028
+    ],
+    "channel_seeds": [
+      102026,
+      102027,
+      102028
+    ],
+    "samples_per_job": 1000,
+    "snr_db": 10.0,
+    "selection_seed": 42026,
+    "batch_size": 32,
+    "workers": 0,
+    "device": "cuda",
+    "skip_pga": false,
+    "skip_spectral": false,
+    "source_snapshot_sha256": "4f0679885e6dca7e5db110f1add5001c75589bcf5ba746a9cb79221202bce0e6",
+    "artifacts": [
+      {
+        "job": "r0_seed2026_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2026\\resolved_config.json",
+        "sha256": "530111e83a0771ef9777624c8c10120ba4abdeac30548b937540b4d66c5dd177"
+      },
+      {
+        "job": "r0_seed2026_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2026\\checkpoint_best.pt",
+        "sha256": "7460356aa12746a7fcdef14fcf06b9b05516e41b6492bc8ae991af3c5e30af9f"
+      },
+      {
+        "job": "r0_seed2026_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2026\\resolved_config.json",
+        "sha256": "530111e83a0771ef9777624c8c10120ba4abdeac30548b937540b4d66c5dd177"
+      },
+      {
+        "job": "r0_seed2026_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2026\\checkpoint_best.pt",
+        "sha256": "7460356aa12746a7fcdef14fcf06b9b05516e41b6492bc8ae991af3c5e30af9f"
+      },
+      {
+        "job": "r0_seed2026_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2026\\resolved_config.json",
+        "sha256": "530111e83a0771ef9777624c8c10120ba4abdeac30548b937540b4d66c5dd177"
+      },
+      {
+        "job": "r0_seed2026_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2026\\checkpoint_best.pt",
+        "sha256": "7460356aa12746a7fcdef14fcf06b9b05516e41b6492bc8ae991af3c5e30af9f"
+      },
+      {
+        "job": "r1_seed2026_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2026\\resolved_config.json",
+        "sha256": "4be2138816a7ca872494898d438e19e4d0d9db143e0403feeffa5aec7dd49abb"
+      },
+      {
+        "job": "r1_seed2026_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2026\\checkpoint_best.pt",
+        "sha256": "22befa6c409452ae7209725821a67dd8e8d3cad5c3a252f5784d4fe0f80e60df"
+      },
+      {
+        "job": "r1_seed2026_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2026\\resolved_config.json",
+        "sha256": "4be2138816a7ca872494898d438e19e4d0d9db143e0403feeffa5aec7dd49abb"
+      },
+      {
+        "job": "r1_seed2026_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2026\\checkpoint_best.pt",
+        "sha256": "22befa6c409452ae7209725821a67dd8e8d3cad5c3a252f5784d4fe0f80e60df"
+      },
+      {
+        "job": "r1_seed2026_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2026\\resolved_config.json",
+        "sha256": "4be2138816a7ca872494898d438e19e4d0d9db143e0403feeffa5aec7dd49abb"
+      },
+      {
+        "job": "r1_seed2026_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2026\\checkpoint_best.pt",
+        "sha256": "22befa6c409452ae7209725821a67dd8e8d3cad5c3a252f5784d4fe0f80e60df"
+      },
+      {
+        "job": "c0_seed2026_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2026\\resolved_config.json",
+        "sha256": "dc47aaa04ee402cff7e13184f02056718cdabd3e75eedfa232ffe537437ab92b"
+      },
+      {
+        "job": "c0_seed2026_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2026\\checkpoint_best.pt",
+        "sha256": "33f3e74c51562d59f4fbc3b4eeb55362e0af02b91606294b889a1b95376ff6b0"
+      },
+      {
+        "job": "c0_seed2026_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2026\\resolved_config.json",
+        "sha256": "dc47aaa04ee402cff7e13184f02056718cdabd3e75eedfa232ffe537437ab92b"
+      },
+      {
+        "job": "c0_seed2026_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2026\\checkpoint_best.pt",
+        "sha256": "33f3e74c51562d59f4fbc3b4eeb55362e0af02b91606294b889a1b95376ff6b0"
+      },
+      {
+        "job": "c0_seed2026_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2026\\resolved_config.json",
+        "sha256": "dc47aaa04ee402cff7e13184f02056718cdabd3e75eedfa232ffe537437ab92b"
+      },
+      {
+        "job": "c0_seed2026_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2026\\checkpoint_best.pt",
+        "sha256": "33f3e74c51562d59f4fbc3b4eeb55362e0af02b91606294b889a1b95376ff6b0"
+      },
+      {
+        "job": "c1_seed2026_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2026\\resolved_config.json",
+        "sha256": "d78fe49872dae37bf9b003b60c6689de761cf774871d6e1c7ec0df84471863cc"
+      },
+      {
+        "job": "c1_seed2026_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2026\\checkpoint_best.pt",
+        "sha256": "853ec2d114d07eb761a9a9b80fd625134fe784eec490c3529228270ea2952857"
+      },
+      {
+        "job": "c1_seed2026_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2026\\resolved_config.json",
+        "sha256": "d78fe49872dae37bf9b003b60c6689de761cf774871d6e1c7ec0df84471863cc"
+      },
+      {
+        "job": "c1_seed2026_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2026\\checkpoint_best.pt",
+        "sha256": "853ec2d114d07eb761a9a9b80fd625134fe784eec490c3529228270ea2952857"
+      },
+      {
+        "job": "c1_seed2026_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2026\\resolved_config.json",
+        "sha256": "d78fe49872dae37bf9b003b60c6689de761cf774871d6e1c7ec0df84471863cc"
+      },
+      {
+        "job": "c1_seed2026_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2026\\checkpoint_best.pt",
+        "sha256": "853ec2d114d07eb761a9a9b80fd625134fe784eec490c3529228270ea2952857"
+      },
+      {
+        "job": "r0_seed2027_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2027\\resolved_config.json",
+        "sha256": "0b8bd82b9be6b1cf9003bca13862943d1143ecd380bbc906986d790370908d6e"
+      },
+      {
+        "job": "r0_seed2027_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2027\\checkpoint_best.pt",
+        "sha256": "ef1ed682207bbdee44e915f7c436417b2d61515c2c0fd2a37603567a6c4321a1"
+      },
+      {
+        "job": "r0_seed2027_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2027\\resolved_config.json",
+        "sha256": "0b8bd82b9be6b1cf9003bca13862943d1143ecd380bbc906986d790370908d6e"
+      },
+      {
+        "job": "r0_seed2027_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2027\\checkpoint_best.pt",
+        "sha256": "ef1ed682207bbdee44e915f7c436417b2d61515c2c0fd2a37603567a6c4321a1"
+      },
+      {
+        "job": "r0_seed2027_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2027\\resolved_config.json",
+        "sha256": "0b8bd82b9be6b1cf9003bca13862943d1143ecd380bbc906986d790370908d6e"
+      },
+      {
+        "job": "r0_seed2027_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2027\\checkpoint_best.pt",
+        "sha256": "ef1ed682207bbdee44e915f7c436417b2d61515c2c0fd2a37603567a6c4321a1"
+      },
+      {
+        "job": "r1_seed2027_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2027\\resolved_config.json",
+        "sha256": "402bffbc62665a71fd30f6b677f32695a98c5f25c38ad6cb33f865cd4ef5c63f"
+      },
+      {
+        "job": "r1_seed2027_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2027\\checkpoint_best.pt",
+        "sha256": "7edfef8b65ac3590c501b8b7cd03a2b7bcd99d9f1711da627cc5f7df2e4aeab5"
+      },
+      {
+        "job": "r1_seed2027_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2027\\resolved_config.json",
+        "sha256": "402bffbc62665a71fd30f6b677f32695a98c5f25c38ad6cb33f865cd4ef5c63f"
+      },
+      {
+        "job": "r1_seed2027_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2027\\checkpoint_best.pt",
+        "sha256": "7edfef8b65ac3590c501b8b7cd03a2b7bcd99d9f1711da627cc5f7df2e4aeab5"
+      },
+      {
+        "job": "r1_seed2027_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2027\\resolved_config.json",
+        "sha256": "402bffbc62665a71fd30f6b677f32695a98c5f25c38ad6cb33f865cd4ef5c63f"
+      },
+      {
+        "job": "r1_seed2027_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2027\\checkpoint_best.pt",
+        "sha256": "7edfef8b65ac3590c501b8b7cd03a2b7bcd99d9f1711da627cc5f7df2e4aeab5"
+      },
+      {
+        "job": "c0_seed2027_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2027\\resolved_config.json",
+        "sha256": "9e810204d103e5f4d0aa738643177574100996573d34de7f28126bb0e6d0f1e6"
+      },
+      {
+        "job": "c0_seed2027_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2027\\checkpoint_best.pt",
+        "sha256": "03d2296ea6b18ba3c0e155adda0ad2ed18d32b1c3f81c355df7e1d72ccc4b3c3"
+      },
+      {
+        "job": "c0_seed2027_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2027\\resolved_config.json",
+        "sha256": "9e810204d103e5f4d0aa738643177574100996573d34de7f28126bb0e6d0f1e6"
+      },
+      {
+        "job": "c0_seed2027_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2027\\checkpoint_best.pt",
+        "sha256": "03d2296ea6b18ba3c0e155adda0ad2ed18d32b1c3f81c355df7e1d72ccc4b3c3"
+      },
+      {
+        "job": "c0_seed2027_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2027\\resolved_config.json",
+        "sha256": "9e810204d103e5f4d0aa738643177574100996573d34de7f28126bb0e6d0f1e6"
+      },
+      {
+        "job": "c0_seed2027_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2027\\checkpoint_best.pt",
+        "sha256": "03d2296ea6b18ba3c0e155adda0ad2ed18d32b1c3f81c355df7e1d72ccc4b3c3"
+      },
+      {
+        "job": "c1_seed2027_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2027\\resolved_config.json",
+        "sha256": "a6ab7eb127ce54a5e5b3be465cbcc309fee7aa33d97d2644d1ab57d2496d85ab"
+      },
+      {
+        "job": "c1_seed2027_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2027\\checkpoint_best.pt",
+        "sha256": "bf03d680526edc0ae0a8cfe2517d38ac4ef791763958122250fdde131a996c2a"
+      },
+      {
+        "job": "c1_seed2027_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2027\\resolved_config.json",
+        "sha256": "a6ab7eb127ce54a5e5b3be465cbcc309fee7aa33d97d2644d1ab57d2496d85ab"
+      },
+      {
+        "job": "c1_seed2027_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2027\\checkpoint_best.pt",
+        "sha256": "bf03d680526edc0ae0a8cfe2517d38ac4ef791763958122250fdde131a996c2a"
+      },
+      {
+        "job": "c1_seed2027_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2027\\resolved_config.json",
+        "sha256": "a6ab7eb127ce54a5e5b3be465cbcc309fee7aa33d97d2644d1ab57d2496d85ab"
+      },
+      {
+        "job": "c1_seed2027_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2027\\checkpoint_best.pt",
+        "sha256": "bf03d680526edc0ae0a8cfe2517d38ac4ef791763958122250fdde131a996c2a"
+      },
+      {
+        "job": "r0_seed2028_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2028\\resolved_config.json",
+        "sha256": "d86e3a677b5bf73dff5aeb4af6e7b0dd1106b52fa8c3357c18c99470e684d98e"
+      },
+      {
+        "job": "r0_seed2028_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2028\\checkpoint_best.pt",
+        "sha256": "8f9c9be9fa67551fd32e5637ac54f189849637db8f6449785fd81f0b7ad128a9"
+      },
+      {
+        "job": "r0_seed2028_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2028\\resolved_config.json",
+        "sha256": "d86e3a677b5bf73dff5aeb4af6e7b0dd1106b52fa8c3357c18c99470e684d98e"
+      },
+      {
+        "job": "r0_seed2028_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2028\\checkpoint_best.pt",
+        "sha256": "8f9c9be9fa67551fd32e5637ac54f189849637db8f6449785fd81f0b7ad128a9"
+      },
+      {
+        "job": "r0_seed2028_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2028\\resolved_config.json",
+        "sha256": "d86e3a677b5bf73dff5aeb4af6e7b0dd1106b52fa8c3357c18c99470e684d98e"
+      },
+      {
+        "job": "r0_seed2028_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r0_seed2028\\checkpoint_best.pt",
+        "sha256": "8f9c9be9fa67551fd32e5637ac54f189849637db8f6449785fd81f0b7ad128a9"
+      },
+      {
+        "job": "r1_seed2028_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2028\\resolved_config.json",
+        "sha256": "256d0443f2ef479617b0d6974a6d69494770c9055deae68e0517a24f11fa4377"
+      },
+      {
+        "job": "r1_seed2028_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2028\\checkpoint_best.pt",
+        "sha256": "49b5678c2155476473cac1befb770df1e7c6b4147de50d17c16dad62a634582f"
+      },
+      {
+        "job": "r1_seed2028_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2028\\resolved_config.json",
+        "sha256": "256d0443f2ef479617b0d6974a6d69494770c9055deae68e0517a24f11fa4377"
+      },
+      {
+        "job": "r1_seed2028_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2028\\checkpoint_best.pt",
+        "sha256": "49b5678c2155476473cac1befb770df1e7c6b4147de50d17c16dad62a634582f"
+      },
+      {
+        "job": "r1_seed2028_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2028\\resolved_config.json",
+        "sha256": "256d0443f2ef479617b0d6974a6d69494770c9055deae68e0517a24f11fa4377"
+      },
+      {
+        "job": "r1_seed2028_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\r1_seed2028\\checkpoint_best.pt",
+        "sha256": "49b5678c2155476473cac1befb770df1e7c6b4147de50d17c16dad62a634582f"
+      },
+      {
+        "job": "c0_seed2028_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2028\\resolved_config.json",
+        "sha256": "28572455f15f71410f54901819cd8c120d9fbf29d4246e157307713d1c2b888f"
+      },
+      {
+        "job": "c0_seed2028_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2028\\checkpoint_best.pt",
+        "sha256": "3082847c4887bf803343c4a48a34043ac34fd232bee554fae3ea4b484be5a0ee"
+      },
+      {
+        "job": "c0_seed2028_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2028\\resolved_config.json",
+        "sha256": "28572455f15f71410f54901819cd8c120d9fbf29d4246e157307713d1c2b888f"
+      },
+      {
+        "job": "c0_seed2028_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2028\\checkpoint_best.pt",
+        "sha256": "3082847c4887bf803343c4a48a34043ac34fd232bee554fae3ea4b484be5a0ee"
+      },
+      {
+        "job": "c0_seed2028_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2028\\resolved_config.json",
+        "sha256": "28572455f15f71410f54901819cd8c120d9fbf29d4246e157307713d1c2b888f"
+      },
+      {
+        "job": "c0_seed2028_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c0_seed2028\\checkpoint_best.pt",
+        "sha256": "3082847c4887bf803343c4a48a34043ac34fd232bee554fae3ea4b484be5a0ee"
+      },
+      {
+        "job": "c1_seed2028_repeat0_noise102026",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2028\\resolved_config.json",
+        "sha256": "3719fc6454093a1a7c2fca87e6ff87dd0f1b4ea94e04a990f93406f625cbf3c9"
+      },
+      {
+        "job": "c1_seed2028_repeat0_noise102026",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2028\\checkpoint_best.pt",
+        "sha256": "cc6553ece473139c1025efa978dd1ece254f497ace1a56733c2547ddfc5976cf"
+      },
+      {
+        "job": "c1_seed2028_repeat1_noise102027",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2028\\resolved_config.json",
+        "sha256": "3719fc6454093a1a7c2fca87e6ff87dd0f1b4ea94e04a990f93406f625cbf3c9"
+      },
+      {
+        "job": "c1_seed2028_repeat1_noise102027",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2028\\checkpoint_best.pt",
+        "sha256": "cc6553ece473139c1025efa978dd1ece254f497ace1a56733c2547ddfc5976cf"
+      },
+      {
+        "job": "c1_seed2028_repeat2_noise102028",
+        "kind": "config",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2028\\resolved_config.json",
+        "sha256": "3719fc6454093a1a7c2fca87e6ff87dd0f1b4ea94e04a990f93406f625cbf3c9"
+      },
+      {
+        "job": "c1_seed2028_repeat2_noise102028",
+        "kind": "checkpoint",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\c1_seed2028\\checkpoint_best.pt",
+        "sha256": "cc6553ece473139c1025efa978dd1ece254f497ace1a56733c2547ddfc5976cf"
+      },
+      {
+        "job": "shared",
+        "kind": "evaluator",
+        "path": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\factorial_mechanism_v1\\frozen_resnet18\\checkpoint_best.pt",
+        "sha256": "2a6f0d6d3cc55c6225235641d937051c79bb2745f80cea1b62afc593f9cc0140"
+      }
+    ]
+  },
+  "source_snapshot": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\factorial_mechanism_v1\\diagnostics\\source_snapshot.json",
+  "source_snapshot_sha256": "4f0679885e6dca7e5db110f1add5001c75589bcf5ba746a9cb79221202bce0e6",
+  "cells": [
+    "r0",
+    "r1",
+    "c0",
+    "c1"
+  ],
+  "training_seeds": [
+    2026,
+    2027,
+    2028
+  ],
+  "channel_seeds": [
+    102026,
+    102027,
+    102028
+  ],
+  "selection_seed": 42026,
+  "jobs": 36,
+  "samples_per_job": 1000,
+  "expected_rows": 36000,
+  "snr_db": 10.0,
+  "device": "cuda",
+  "workers": 0,
+  "skip_pga": false,
+  "skip_spectral": false,
+  "evaluator_checkpoint": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\factorial_mechanism_v1\\frozen_resnet18\\checkpoint_best.pt",
+  "registry": "E:\\workspace\\读论文\\PaperLibrary\\04_语义通信\\papers\\2026_Zhang_UnanticipatedRobustness\\code\\outputs\\factorial\\factorial_mechanism_v1\\diagnostics\\registry.csv",
+  "python": "C:\\Users\\lbyy\\anaconda3\\envs\\zhang2026-gpu\\python.exe",
+  "python_version": "3.11.15",
+  "policy": "serial; validated batch shards resume only on a new runner invocation; stop on first failure; never retry within the same invocation",
+  "finished_at": "2026-08-13T09:27:06.338013+00:00"
+}

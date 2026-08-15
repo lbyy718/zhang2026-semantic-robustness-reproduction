@@ -1,0 +1,94 @@
+{
+  "training_runs": 12,
+  "training_seeds_per_cell": 3,
+  "clean_test_images_per_snr_per_seed": 10000,
+  "channel_repeats_per_snr_per_seed": 3,
+  "snr_grid_db": [
+    0.0,
+    2.0,
+    4.0,
+    6.0,
+    8.0,
+    10.0,
+    12.0,
+    14.0,
+    16.0,
+    18.0,
+    20.0
+  ],
+  "at_10db": {
+    "reconstruction_psnr_gain_r1_minus_r0_db": {
+      "values": [
+        7.943082173665367,
+        7.41977818806966,
+        7.94134012858073
+      ],
+      "mean": 7.768066830105252,
+      "sd": 0.3016280694970495,
+      "ci95_t_df2": [
+        7.018781167745089,
+        8.517352492465417
+      ],
+      "paired_standardized_mean_difference_dz": 25.753792884919946,
+      "paired_sign_test_two_sided_p": 0.25
+    },
+    "classification_accuracy_gain_c1_minus_c0_pp": {
+      "values": [
+        1.6299982865651486,
+        4.0633320808410645,
+        1.940000057220459
+      ],
+      "mean": 2.5444434748755573,
+      "sd": 1.3244969695892996,
+      "ci95_t_df2": [
+        -0.7457893963806632,
+        5.834676346131777
+      ],
+      "paired_standardized_mean_difference_dz": 1.9210640215088894,
+      "paired_sign_test_two_sided_p": 0.25
+    }
+  },
+  "inference_note": "n=3 seeds; exact two-sided sign test cannot be below 0.25 when all three directions agree.",
+  "exploratory_pga_10db_128": {
+    "status": "all 12 cells completed; all eligible samples attacked successfully",
+    "reconstruction_mean_power_ratio_r1_over_r0": {
+      "values": [
+        16.458142511013396,
+        14.025486710767444,
+        19.333007460051352
+      ],
+      "geometric_mean": 16.46390024523712,
+      "paired_log_ratio_dz": 17.456129470648666
+    },
+    "classification_mean_power_ratio_c1_over_c0": {
+      "values": [
+        2.2869567314889925,
+        1.5267116660824134,
+        1.8302679828251376
+      ],
+      "geometric_mean": 1.8557090464875943,
+      "paired_log_ratio_dz": 3.054583495453702
+    },
+    "classification_common_clean_correct_ratio_c1_over_c0": {
+      "common_samples_by_seed": [
+        56,
+        65,
+        67
+      ],
+      "ratio_of_means_by_seed": [
+        2.4623875278952316,
+        1.5547115660716864,
+        1.9089983131814074
+      ],
+      "geometric_mean_ratio": 1.940605504675942,
+      "paired_log_ratio_dz": 2.878102925605833
+    },
+    "limitations": [
+      "single deterministic PGA start",
+      "128 test samples per model",
+      "reconstruction uses fixed 15 dB threshold",
+      "clean margin is not matched across cells",
+      "no C&W or independent solver cross-check"
+    ]
+  }
+}

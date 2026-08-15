@@ -13,25 +13,30 @@ from typing import Any, Iterable
 import numpy as np
 import torch
 from torch import Tensor, nn
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, random_split
 
 from .attacks import CWRegressionAttack, ProgressiveGradientAscent
-from .channel import AWGNChannel
+from .channel import AWGNChannel, NoiselessChannel
 from .config import resolve_relative, without_runtime_fields
 from .data import (
     cifar10_datasets,
     limited_dataset,
     make_loader,
-    unwrap_batch,
+    unpack_batch,
 )
 from .metrics import (
+    accuracy_per_sample,
+    classification_failure_score,
+    classification_margin,
     distortion_per_sample,
     mse_per_sample,
     psnr,
     quality_name,
     target_distortion,
 )
-from .model import DeepJSCC
+from .model import DeepJSCC, DeepJSCCClassifier, DeepJSCCResNetClassifier
+
+SemanticModel = DeepJSCC | DeepJSCCClassifier | DeepJSCCResNetClassifier
 
 
 def set_seed(seed: int, deterministic: bool = True) -> None:
@@ -54,15 +59,45 @@ def choose_device(requested: str = "auto") -> torch.device:
     return device
 
 
-def build_model(config: dict[str, Any]) -> DeepJSCC:
+def _objective(config: dict[str, Any]) -> str:
+    return str(config.get("objective", "reconstruction")).lower()
+
+
+def build_model(config: dict[str, Any]) -> SemanticModel:
     model = config["model"]
-    return DeepJSCC(
+    architecture = str(model.get("architecture", "small")).lower()
+    if architecture == "resnet18_bottleneck":
+        return DeepJSCCResNetClassifier(
+            in_channels=int(model["in_channels"]),
+            spatial_size=tuple(model.get("spatial_size", [32, 32])),
+            latent_dim=int(model.get("latent_dim", 768)),
+            feature_dim=int(model.get("feature_dim", 512)),
+            classifier_hidden=int(model.get("classifier_hidden", 512)),
+            num_classes=int(model.get("num_classes", 10)),
+        )
+    common = dict(
         in_channels=int(model["in_channels"]),
         channel_multiplier=int(model["channel_multiplier"]),
         spatial_size=tuple(model.get("spatial_size", [32, 32])),
         kernel_size=int(model.get("kernel_size", 3)),
         residual_kernel_size=int(model.get("residual_kernel_size", 3)),
     )
+    if _objective(config) == "classification":
+        return DeepJSCCClassifier(
+            **common,
+            classifier_hidden=int(model.get("classifier_hidden", 53)),
+            num_classes=int(model.get("num_classes", 10)),
+        )
+    return DeepJSCC(**common)
+
+
+def build_channel(config: dict[str, Any], *, training: bool) -> nn.Module:
+    use_noise = True
+    if training:
+        use_noise = bool(config.get("training", {}).get("channel_noise", True))
+    if not use_noise:
+        return NoiselessChannel()
+    return AWGNChannel(float(config.get("channel", {}).get("fading_gain", 1.0)))
 
 
 def build_dataset(config: dict[str, Any], split: str) -> Dataset[Any]:
@@ -74,6 +109,26 @@ def build_dataset(config: dict[str, Any], split: str) -> Dataset[Any]:
         root, download=bool(data.get("download", False))
     )
     return train_data if split == "train" else test_data
+
+
+def build_training_datasets(config: dict[str, Any]) -> tuple[Dataset[Any], Dataset[Any]]:
+    """Return train/validation sets, preserving legacy test validation on request."""
+    data = config["data"]
+    source = str(data.get("validation_source", "test"))
+    if source == "test":
+        return build_dataset(config, "train"), build_dataset(config, "test")
+    full_train = build_dataset(config, "train")
+    validation_samples = int(data.get("validation_samples", 5000))
+    if not 0 < validation_samples < len(full_train):
+        raise ValueError("train_holdout requires 0 < validation_samples < train size.")
+    split_seed = int(data.get("split_seed", 2026))
+    return tuple(
+        random_split(
+            full_train,
+            [len(full_train) - validation_samples, validation_samples],
+            generator=torch.Generator().manual_seed(split_seed),
+        )
+    )  # type: ignore[return-value]
 
 
 def _sample_train_snr(specification: Any, device: torch.device) -> float | Tensor:
@@ -113,14 +168,15 @@ def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 
 def _checkpoint_payload(
-    model: DeepJSCC,
+    model: SemanticModel,
     optimizer: torch.optim.Optimizer,
     epoch: int,
     config: dict[str, Any],
 ) -> dict[str, Any]:
     return {
         "paper": "Zhang et al. 2026, Unanticipated Adversarial Robustness of Semantic Communication",
-        "scope": "semantic-only reproduction",
+        "scope": "cifar10-image-only reproduction",
+        "objective": _objective(config),
         "epoch": epoch,
         "model_state": model.state_dict(),
         "optimizer_state": optimizer.state_dict(),
@@ -130,7 +186,7 @@ def _checkpoint_payload(
 
 def load_checkpoint(
     config: dict[str, Any], checkpoint_path: str | Path, device: torch.device
-) -> tuple[DeepJSCC, dict[str, Any]]:
+) -> tuple[SemanticModel, dict[str, Any]]:
     try:
         checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
     except TypeError:
@@ -151,8 +207,7 @@ def train(
     set_seed(seed, bool(config.get("deterministic", True)))
     device = choose_device(device_name)
     output = _output_dir(config, output_override)
-    train_data = build_dataset(config, "train")
-    validation_data = build_dataset(config, "test")
+    train_data, validation_data = build_training_datasets(config)
 
     data_config = config["data"]
     train_loader = make_loader(
@@ -162,9 +217,10 @@ def train(
         num_workers=int(data_config.get("num_workers", 0)),
         seed=seed,
     )
-    validation_data = limited_dataset(
-        validation_data, int(data_config.get("validation_samples", 0)) or None
-    )
+    if str(data_config.get("validation_source", "test")) == "test":
+        validation_data = limited_dataset(
+            validation_data, int(data_config.get("validation_samples", 0)) or None
+        )
     validation_loader = make_loader(
         validation_data,
         batch_size=int(data_config.get("evaluation_batch_size", 256)),
@@ -174,7 +230,8 @@ def train(
     )
 
     model = build_model(config).to(device)
-    channel = AWGNChannel(float(config.get("channel", {}).get("fading_gain", 1.0))).to(device)
+    training_channel = build_channel(config, training=True).to(device)
+    validation_channel = build_channel(config, training=False).to(device)
     training = config["training"]
     optimizer = torch.optim.AdamW(
         model.parameters(),
@@ -203,51 +260,60 @@ def train(
     for epoch in range(start_epoch + 1, epochs + 1):
         model.train()
         train_loss_sum = 0.0
-        train_mse_sum = 0.0
+        train_metric_sum = 0.0
         train_count = 0
         for batch in train_loader:
-            inputs = unwrap_batch(batch).to(device, non_blocking=True)
+            inputs, labels = unpack_batch(batch)
+            inputs = inputs.to(device, non_blocking=True)
+            if labels is not None:
+                labels = labels.to(device, non_blocking=True)
             snr_db = _sample_train_snr(training.get("snr_db", 10.0), device)
             optimizer.zero_grad(set_to_none=True)
-            reconstruction = model(inputs, channel, snr_db)
-            losses = _loss_per_sample(config, inputs, reconstruction)
+            predictions = model(inputs, training_channel, snr_db)
+            losses = _loss_per_sample(config, inputs, labels, predictions)
             loss = losses.mean()
             loss.backward()
             optimizer.step()
             train_loss_sum += float(loss.detach()) * inputs.shape[0]
-            train_mse_sum += float(
-                mse_per_sample(inputs, reconstruction).detach().sum()
+            train_metric_sum += float(
+                _primary_metric_per_sample(config, inputs, labels, predictions)
+                .detach()
+                .sum()
             )
             train_count += inputs.shape[0]
 
         model.eval()
         validation_loss_sum = 0.0
-        validation_mse_sum = 0.0
+        validation_metric_sum = 0.0
         validation_count = 0
         with torch.no_grad():
             for batch in validation_loader:
-                inputs = unwrap_batch(batch).to(device, non_blocking=True)
-                reconstruction = model(inputs, channel, validation_snr)
-                losses = _loss_per_sample(config, inputs, reconstruction)
+                inputs, labels = unpack_batch(batch)
+                inputs = inputs.to(device, non_blocking=True)
+                if labels is not None:
+                    labels = labels.to(device, non_blocking=True)
+                predictions = model(inputs, validation_channel, validation_snr)
+                losses = _loss_per_sample(config, inputs, labels, predictions)
                 validation_loss_sum += float(losses.sum())
-                validation_mse_sum += float(
-                    mse_per_sample(inputs, reconstruction).sum()
+                validation_metric_sum += float(
+                    _primary_metric_per_sample(config, inputs, labels, predictions).sum()
                 )
                 validation_count += inputs.shape[0]
         train_loss = train_loss_sum / max(train_count, 1)
         validation_loss = validation_loss_sum / max(validation_count, 1)
-        train_mse = train_mse_sum / max(train_count, 1)
-        validation_mse = validation_mse_sum / max(validation_count, 1)
+        train_metric = train_metric_sum / max(train_count, 1)
+        validation_metric = validation_metric_sum / max(validation_count, 1)
         row = {
             "epoch": epoch,
             "loss_name": loss_name,
             "train_loss": train_loss,
             "validation_loss": validation_loss,
-            "train_mse": train_mse,
-            "validation_mse": validation_mse,
             "validation_snr_db": validation_snr,
             "elapsed_seconds": time.time() - start_time,
         }
+        metric_name = _primary_metric_name(config)
+        row[f"train_{metric_name}"] = train_metric
+        row[f"validation_{metric_name}"] = validation_metric
         log_rows.append(row)
         print(json.dumps(row, ensure_ascii=False), flush=True)
 
@@ -264,7 +330,8 @@ def train(
     _write_json(
         output / "run_manifest.json",
         {
-            "scope": "semantic-only",
+            "scope": "cifar10-image-only training",
+            "objective": _objective(config),
             "device": str(device),
             "seed": seed,
             "epochs": epochs,
@@ -272,37 +339,69 @@ def train(
             "selection_metric": f"validation_{loss_name}",
             "best_validation_loss": best_loss,
             f"best_validation_{loss_name}": best_loss,
+            "training_channel_noise": bool(training.get("channel_noise", True)),
+            "validation_source": str(data_config.get("validation_source", "test")),
             "config": without_runtime_fields(config),
         },
     )
     return output
 
 
-def _distortion(config: dict[str, Any], target: Tensor, reconstruction: Tensor) -> Tensor:
-    return distortion_per_sample(config["task"], target, reconstruction)
+def _require_labels(labels: Tensor | None) -> Tensor:
+    if labels is None:
+        raise ValueError("Classification objective requires class labels in every batch.")
+    return labels
 
 
-def _quality(config: dict[str, Any], target: Tensor, reconstruction: Tensor) -> Tensor:
-    return psnr(target, reconstruction)
+def _distortion(config: dict[str, Any], target: Tensor, predictions: Tensor) -> Tensor:
+    if _objective(config) == "classification":
+        return classification_failure_score(target.long(), predictions)
+    return distortion_per_sample(config["task"], target, predictions)
+
+
+def _quality(config: dict[str, Any], target: Tensor, predictions: Tensor) -> Tensor:
+    if _objective(config) == "classification":
+        return accuracy_per_sample(target.long(), predictions)
+    return psnr(target, predictions)
 
 
 def _loss_name(config: dict[str, Any]) -> str:
-    name = str(config.get("training", {}).get("loss", "mse")).lower()
-    if name != "mse":
-        raise ValueError("The image-only repository supports training.loss='mse'.")
+    default = "cross_entropy" if _objective(config) == "classification" else "mse"
+    name = str(config.get("training", {}).get("loss", default)).lower()
+    expected = {"classification": "cross_entropy", "reconstruction": "mse"}[
+        _objective(config)
+    ]
+    if name != expected:
+        raise ValueError(f"{_objective(config)} requires training.loss='{expected}'.")
     return name
 
 
 def _loss_per_sample(
-    config: dict[str, Any], target: Tensor, reconstruction: Tensor
+    config: dict[str, Any], inputs: Tensor, labels: Tensor | None, predictions: Tensor
 ) -> Tensor:
     _loss_name(config)
-    return mse_per_sample(target, reconstruction)
+    if _objective(config) == "classification":
+        return torch.nn.functional.cross_entropy(
+            predictions, _require_labels(labels).long(), reduction="none"
+        )
+    return mse_per_sample(inputs, predictions)
+
+
+def _primary_metric_name(config: dict[str, Any]) -> str:
+    return "accuracy" if _objective(config) == "classification" else "mse"
+
+
+def _primary_metric_per_sample(
+    config: dict[str, Any], inputs: Tensor, labels: Tensor | None, predictions: Tensor
+) -> Tensor:
+    if _objective(config) == "classification":
+        return accuracy_per_sample(_require_labels(labels).long(), predictions)
+    return mse_per_sample(inputs, predictions)
 
 
 def _evaluate_dataset(
-    model: DeepJSCC,
-    channel: AWGNChannel,
+    model: SemanticModel,
+    channel: nn.Module,
     loader: Iterable[Any],
     config: dict[str, Any],
     snr_db: float,
@@ -310,24 +409,49 @@ def _evaluate_dataset(
 ) -> dict[str, float]:
     distortions: list[Tensor] = []
     qualities: list[Tensor] = []
-    mses: list[Tensor] = []
+    losses: list[Tensor] = []
+    margins: list[Tensor] = []
     with torch.no_grad():
         for batch in loader:
-            inputs = unwrap_batch(batch).to(device, non_blocking=True)
-            reconstruction = model(inputs, channel, snr_db)
-            distortions.append(_distortion(config, inputs, reconstruction).cpu())
-            qualities.append(_quality(config, inputs, reconstruction).cpu())
-            mses.append(mse_per_sample(inputs, reconstruction).cpu())
+            inputs, labels = unpack_batch(batch)
+            inputs = inputs.to(device, non_blocking=True)
+            if labels is not None:
+                labels = labels.to(device, non_blocking=True)
+            predictions = model(inputs, channel, snr_db)
+            target = _require_labels(labels) if _objective(config) == "classification" else inputs
+            distortions.append(_distortion(config, target, predictions).cpu())
+            qualities.append(_quality(config, target, predictions).cpu())
+            losses.append(_loss_per_sample(config, inputs, labels, predictions).cpu())
+            if _objective(config) == "classification":
+                margins.append(classification_margin(target.long(), predictions).cpu())
     all_distortions = torch.cat(distortions)
     all_qualities = torch.cat(qualities)
-    all_mses = torch.cat(mses)
-    return {
+    all_losses = torch.cat(losses)
+    result = {
         "samples": int(all_distortions.numel()),
         "mean_distortion": float(all_distortions.mean()),
-        "mean_mse": float(all_mses.mean()),
-        f"mean_{quality_name(config['task'])}": float(all_qualities.mean()),
-        f"std_{quality_name(config['task'])}": float(all_qualities.std(unbiased=False)),
+        "mean_loss": float(all_losses.mean()),
     }
+    if _objective(config) == "classification":
+        result.update(
+            {
+                "mean_cross_entropy": float(all_losses.mean()),
+                "mean_accuracy": float(all_qualities.mean()),
+                "std_accuracy": float(all_qualities.std(unbiased=False)),
+                "mean_logit_margin": float(torch.cat(margins).mean()),
+            }
+        )
+    else:
+        result.update(
+            {
+                "mean_mse": float(all_losses.mean()),
+                f"mean_{quality_name(config['task'])}": float(all_qualities.mean()),
+                f"std_{quality_name(config['task'])}": float(
+                    all_qualities.std(unbiased=False)
+                ),
+            }
+        )
+    return result
 
 
 def evaluate_clean(
@@ -351,7 +475,7 @@ def evaluate_clean(
         num_workers=int(config["data"].get("num_workers", 0)),
         seed=seed,
     )
-    channel = AWGNChannel(float(config.get("channel", {}).get("fading_gain", 1.0))).to(device)
+    channel = build_channel(config, training=False).to(device)
     rows: list[dict[str, Any]] = []
     repeats = int(evaluation.get("channel_repeats", 1))
     for snr_db in map(float, evaluation["snr_db"]):
@@ -359,20 +483,24 @@ def evaluate_clean(
         for repeat in range(repeats):
             set_seed(seed + repeat + int(round(10 * snr_db)))
             repeat_rows.append(_evaluate_dataset(model, channel, loader, config, snr_db, device))
-        key = f"mean_{quality_name(config['task'])}"
-        rows.append(
-            {
-                "snr_db": snr_db,
-                "samples": repeat_rows[0]["samples"],
-                "channel_repeats": repeats,
-                "mean_distortion": sum(row["mean_distortion"] for row in repeat_rows) / repeats,
-                "mean_mse": sum(row["mean_mse"] for row in repeat_rows) / repeats,
-                key: sum(row[key] for row in repeat_rows) / repeats,
-                f"repeat_std_{quality_name(config['task'])}": float(
-                    np.std([row[key] for row in repeat_rows])
-                ),
-            }
-        )
+        key = "mean_accuracy" if _objective(config) == "classification" else f"mean_{quality_name(config['task'])}"
+        row = {
+            "snr_db": snr_db,
+            "samples": repeat_rows[0]["samples"],
+            "channel_repeats": repeats,
+            "mean_distortion": sum(item["mean_distortion"] for item in repeat_rows) / repeats,
+            "mean_loss": sum(item["mean_loss"] for item in repeat_rows) / repeats,
+            key: sum(item[key] for item in repeat_rows) / repeats,
+            f"repeat_std_{key.removeprefix('mean_')}": float(
+                np.std([item[key] for item in repeat_rows])
+            ),
+        }
+        if _objective(config) == "classification":
+            row["mean_cross_entropy"] = sum(item["mean_cross_entropy"] for item in repeat_rows) / repeats
+            row["mean_logit_margin"] = sum(item["mean_logit_margin"] for item in repeat_rows) / repeats
+        else:
+            row["mean_mse"] = sum(item["mean_mse"] for item in repeat_rows) / repeats
+        rows.append(row)
         print(json.dumps(rows[-1], ensure_ascii=False), flush=True)
     output = _output_dir(config, output_override)
     path = output / "clean_metrics.csv"
@@ -380,9 +508,10 @@ def evaluate_clean(
     _write_json(
         output / "clean_manifest.json",
         {
-            "scope": "semantic-only clean evaluation",
+            "scope": "cifar10-image-only clean evaluation",
             "checkpoint": str(Path(checkpoint_path).resolve()),
             "task": config["task"],
+            "objective": _objective(config),
             "rows": rows,
         },
     )
@@ -428,10 +557,15 @@ def evaluate_attacks(
     evaluation = config["evaluation"]
     max_samples = int(config.get("attacks", {}).get("max_samples", evaluation.get("max_samples", 0)))
     dataset = limited_dataset(dataset, max_samples or None)
-    channel = AWGNChannel(float(config.get("channel", {}).get("fading_gain", 1.0))).to(device)
+    channel = build_channel(config, training=False).to(device)
     task = config["task"]
-    target_quality = float(config["attacks"].get("target_quality_db", 15.0))
-    threshold = target_distortion(task, target_quality)
+    objective = _objective(config)
+    target_quality = (
+        None
+        if objective == "classification"
+        else float(config["attacks"].get("target_quality_db", 15.0))
+    )
+    threshold = 0.0 if objective == "classification" else target_distortion(task, target_quality)
     sample_rows: list[dict[str, Any]] = []
     summary_rows: list[dict[str, Any]] = []
 
@@ -449,35 +583,35 @@ def evaluate_attacks(
             set_seed(seed + int(round(10 * snr_db)))
             current_rows: list[dict[str, Any]] = []
             for batch in loader:
-                inputs = unwrap_batch(batch).to(device, non_blocking=True)
+                inputs, labels = unpack_batch(batch)
+                inputs = inputs.to(device, non_blocking=True)
+                if labels is not None:
+                    labels = labels.to(device, non_blocking=True)
+                target = _require_labels(labels) if objective == "classification" else inputs
                 with torch.no_grad():
                     symbols = model.encode(inputs)
                     received = channel(symbols, snr_db)
-                    clean_reconstruction = model.decode(received)
-                    clean_distortion = _distortion(config, inputs, clean_reconstruction)
-                    clean_quality = _quality(config, inputs, clean_reconstruction)
+                    clean_predictions = model.decode(received)
+                    clean_distortion = _distortion(config, target, clean_predictions)
+                    clean_quality = _quality(config, target, clean_predictions)
                 result = attack(
                     model.decoder,
-                    inputs,
+                    target,
                     received,
-                    lambda target, reconstruction: _distortion(
-                        config, target, reconstruction
-                    ),
+                    lambda expected, predictions: _distortion(config, expected, predictions),
                     threshold,
                 )
-                adversarial_quality = _quality(config, inputs, result.reconstruction)
+                adversarial_quality = _quality(config, target, result.reconstruction)
                 for local_index in range(inputs.shape[0]):
                     row = {
                         "attack": attack_name,
                         "objective_variant": result.objective_variant,
+                        "task_objective": objective,
                         "snr_db": snr_db,
                         "sample_index": len(current_rows),
-                        "target_quality_db": target_quality,
                         "target_distortion": threshold,
                         "clean_distortion": float(clean_distortion[local_index]),
-                        f"clean_{quality_name(task)}": float(clean_quality[local_index]),
                         "attacked_distortion": float(result.distortion[local_index]),
-                        f"attacked_{quality_name(task)}": float(adversarial_quality[local_index]),
                         "success": int(result.success[local_index]),
                         "steps": int(result.steps[local_index]),
                         "attack_power_total_l2_sq": float(result.total_power[local_index]),
@@ -485,9 +619,33 @@ def evaluate_attacks(
                             result.power_per_channel_use[local_index]
                         ),
                     }
+                    if objective == "classification":
+                        row.update(
+                            {
+                                "class_label": int(target[local_index]),
+                                "target_decision_margin": 0.0,
+                                "clean_correct": int(clean_quality[local_index]),
+                                "clean_logit_margin": float(-clean_distortion[local_index]),
+                                "attacked_correct": int(adversarial_quality[local_index]),
+                                "attacked_logit_margin": float(-result.distortion[local_index]),
+                            }
+                        )
+                    else:
+                        row.update(
+                            {
+                                "target_quality_db": target_quality,
+                                f"clean_{quality_name(task)}": float(clean_quality[local_index]),
+                                f"attacked_{quality_name(task)}": float(adversarial_quality[local_index]),
+                            }
+                        )
                     current_rows.append(row)
                     sample_rows.append(row)
-            successes = [row for row in current_rows if row["success"]]
+            eligible = (
+                [row for row in current_rows if row["clean_correct"]]
+                if objective == "classification"
+                else current_rows
+            )
+            successes = [row for row in eligible if row["success"]]
             mean_success_power = (
                 sum(row["attack_power_total_l2_sq"] for row in successes) / len(successes)
                 if successes
@@ -496,12 +654,13 @@ def evaluate_attacks(
             summary = {
                 "attack": attack_name,
                 "snr_db": snr_db,
-                "samples": len(current_rows),
+                "samples": len(eligible),
+                "total_samples": len(current_rows),
                 "successes": len(successes),
-                "success_rate": len(successes) / max(len(current_rows), 1),
+                "success_rate": len(successes) / max(len(eligible), 1),
                 "mean_attack_power_total_l2_sq_successes": mean_success_power,
                 "mean_attack_power_total_l2_sq_all": (
-                    mean_success_power if len(successes) == len(current_rows) else None
+                    mean_success_power if len(successes) == len(eligible) else None
                 ),
                 "paper_power_convention": "total_l2_squared",
             }
@@ -516,12 +675,18 @@ def evaluate_attacks(
     _write_json(
         output / "attack_manifest.json",
         {
-            "scope": "semantic-only adversarial evaluation",
+            "scope": "cifar10-image-only adversarial evaluation",
             "checkpoint": str(Path(checkpoint_path).resolve()),
             "attacks": attack_names,
             "task": task,
+            "objective": objective,
             "target_quality_db": target_quality,
             "target_distortion": threshold,
+            "classification_success_rule": (
+                "max_other_logit - true_logit >= 0, reported among clean-correct samples"
+                if objective == "classification"
+                else None
+            ),
             "power_fields": {
                 "paper_default": "sum_i s_i^2",
                 "diagnostic": "mean_i s_i^2",
@@ -551,11 +716,12 @@ def plot_results(
         with Path(clean_csv).open("r", encoding="utf-8") as stream:
             rows = list(csv.DictReader(stream))
         axis = axes[0, axis_index]
-        key = f"mean_{quality_name(config['task'])}"
+        classification = _objective(config) == "classification"
+        key = "mean_accuracy" if classification else f"mean_{quality_name(config['task'])}"
         axis.plot([float(row["snr_db"]) for row in rows], [float(row[key]) for row in rows], "*-", label="DeepJSCC")
-        axis.set_xlabel("SNR η (dB)")
-        axis.set_ylabel("PSNR (dB)")
-        axis.set_title("Semantic clean performance")
+        axis.set_xlabel("SNR (dB)")
+        axis.set_ylabel("Accuracy" if classification else "PSNR (dB)")
+        axis.set_title(f"{_objective(config).title()} clean performance")
         axis.grid(True, alpha=0.3)
         axis.legend()
         axis_index += 1
@@ -575,8 +741,8 @@ def plot_results(
             ]
             axis.plot(x_values, y_values, "*-", label=name.upper())
         axis.set_yscale("log")
-        axis.set_xlabel("SNR η (dB)")
-        axis.set_ylabel("ρ* (total squared L2 power)")
+        axis.set_xlabel("SNR (dB)")
+        axis.set_ylabel("rho* (total squared L2 power)")
         axis.set_title("Semantic minimum attack power")
         axis.grid(True, which="both", alpha=0.3)
         axis.legend()

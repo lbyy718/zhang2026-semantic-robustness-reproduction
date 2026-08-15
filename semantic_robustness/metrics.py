@@ -19,6 +19,25 @@ def psnr(target: Tensor, reconstruction: Tensor, peak: float = 1.0) -> Tensor:
     return 10.0 * torch.log10((peak**2) / mse)
 
 
+def classification_margin(labels: Tensor, logits: Tensor) -> Tensor:
+    """True-class logit minus the strongest competing logit."""
+    if logits.ndim != 2 or labels.ndim != 1 or logits.shape[0] != labels.shape[0]:
+        raise ValueError("Expected logits [batch, classes] and labels [batch].")
+    true_logits = logits.gather(1, labels[:, None]).squeeze(1)
+    competitors = logits.clone()
+    competitors.scatter_(1, labels[:, None], float("-inf"))
+    return true_logits - competitors.max(dim=1).values
+
+
+def classification_failure_score(labels: Tensor, logits: Tensor) -> Tensor:
+    """Non-negative values indicate misclassification (attack success)."""
+    return -classification_margin(labels, logits)
+
+
+def accuracy_per_sample(labels: Tensor, logits: Tensor) -> Tensor:
+    return logits.argmax(dim=1).eq(labels).to(logits.dtype)
+
+
 def distortion_per_sample(task: str, target: Tensor, reconstruction: Tensor) -> Tensor:
     if task != "image":
         raise ValueError("Only the CIFAR-10 image task is supported.")

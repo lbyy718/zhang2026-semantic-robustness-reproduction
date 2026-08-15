@@ -1,4 +1,4 @@
-"""Command-line interface for the CIFAR-10 DeepJSCC reproduction."""
+"""Command-line interface for CIFAR-10 reconstruction/classification controls."""
 
 from __future__ import annotations
 
@@ -22,16 +22,16 @@ from .theory import (
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="CIFAR-10 image reproduction of Zhang et al. (2026)."
+        description="CIFAR-10 DeepJSCC reproduction and factorial controls."
     )
     commands = parser.add_subparsers(dest="command", required=True)
 
-    train_parser = commands.add_parser("train", help="Train the CIFAR-10 DeepJSCC model.")
+    train_parser = commands.add_parser("train", help="Train the configured CIFAR-10 task model.")
     train_parser.add_argument("--config", required=True)
     train_parser.add_argument("--output")
     train_parser.add_argument("--device", default="auto")
 
-    clean_parser = commands.add_parser("clean", help="Evaluate the clean PSNR-SNR curve.")
+    clean_parser = commands.add_parser("clean", help="Evaluate clean performance over SNR.")
     clean_parser.add_argument("--config", required=True)
     clean_parser.add_argument("--checkpoint", required=True)
     clean_parser.add_argument("--output")

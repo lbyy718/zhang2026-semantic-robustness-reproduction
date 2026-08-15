@@ -1,5 +1,5 @@
 {
-  "scope": "semantic-only",
+  "scope": "cifar10-image-only training",
   "device": "cuda",
   "seed": 2026,
   "epochs": 1000,
